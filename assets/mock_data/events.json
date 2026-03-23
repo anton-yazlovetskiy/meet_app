@@ -1,0 +1,113 @@
+[
+  {
+    "id": "event_1",
+    "title": "Поход на каток",
+    "description": "Тёплый вечер на льду. Приносим свои коньки или берем в прокате.",
+    "tags": ["спорт", "зима"],
+    "location": {
+      "lat": 55.7558,
+      "lng": 37.6173,
+      "mapLink": "https://maps.google.com/?q=55.7558,37.6173"
+    },
+    "isPublic": true,
+    "eventType": "voting",
+    "creatorId": "user_1",
+    "managers": ["user_1"],
+    "maxParticipants": null,
+    "price": 0,
+    "createdAt": "2026-03-23T10:00:00Z",
+    "startLimit": "2026-04-20T23:59:59Z",
+    "status": "planned",
+    "votingPeriod": {
+      "start": "2026-04-10T00:00:00Z",
+      "end": "2026-04-25T23:59:59Z"
+    },
+    "finalSlotId": null,
+    "participants": [],
+    "applicants": ["user_2"],
+    "slotStats": [
+      {
+        "slotId": "slot_1",
+        "votes": 1,
+        "voters": ["user_2"]
+      }
+    ],
+    "chatId": "chat_1",
+    "expenseSummary": {
+      "totalAmount": 0,
+      "receiptCount": 0
+    },
+    "isArchived": false
+  },
+  {
+    "id": "event_2",
+    "title": "Экскурсия по музею",
+    "description": "Познавательная экскурсия в историческом музее города.",
+    "tags": ["культура", "экскурсия"],
+    "location": {
+      "lat": 55.7614,
+      "lng": 37.6175,
+      "mapLink": "https://maps.google.com/?q=55.7614,37.6175"
+    },
+    "isPublic": true,
+    "eventType": "fixed",
+    "creatorId": "user_3",
+    "managers": ["user_3"],
+    "maxParticipants": 20,
+    "price": 500,
+    "createdAt": "2026-03-20T14:00:00Z",
+    "startLimit": "2026-04-19T23:59:59Z",
+    "status": "fixed",
+    "votingPeriod": null,
+    "finalSlotId": "slot_2",
+    "participants": ["user_1", "user_2"],
+    "applicants": [],
+    "slotStats": [
+      {
+        "slotId": "slot_2",
+        "votes": 0,
+        "voters": []
+      }
+    ],
+    "chatId": "chat_2",
+    "expenseSummary": {
+      "totalAmount": 1500,
+      "receiptCount": 2
+    },
+    "isArchived": false
+  },
+  {
+    "id": "event_3",
+    "title": "Вечер в баре",
+    "description": "Неформальный вечер с друзьями. Место проведения будет выбрано по результатам голосования.",
+    "tags": ["развлечения", "общение"],
+    "location": {
+      "lat": 55.7505,
+      "lng": 37.6174,
+      "mapLink": "https://maps.google.com/?q=55.7505,37.6174"
+    },
+    "isPublic": false,
+    "eventType": "voting",
+    "creatorId": "user_2",
+    "managers": ["user_2"],
+    "maxParticipants": 10,
+    "price": 0,
+    "createdAt": "2026-03-19T15:00:00Z",
+    "startLimit": "2026-04-18T23:59:59Z",
+    "status": "planned",
+    "votingPeriod": {
+      "start": "2026-04-01T00:00:00Z",
+      "end": "2026-04-15T23:59:59Z"
+    },
+    "finalSlotId": null,
+    "participants": [],
+    "applicants": ["user_1"],
+    "slotStats": [],
+    "chatId": "chat_3",
+    "expenseSummary": {
+      "totalAmount": 0,
+      "receiptCount": 0
+    },
+    "isArchived": false
+  }
+]

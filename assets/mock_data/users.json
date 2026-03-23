@@ -1,0 +1,62 @@
+[
+  {
+    "id": "user_1",
+    "name": "Иван Петров",
+    "avatarUrl": "https://example.com/avatar1.jpg",
+    "email": "ivan@example.com",
+    "gender": "male",
+    "birthDate": "1995-05-15",
+    "age": 28,
+    "rating": 4.8,
+    "status": "active",
+    "blockedUntil": null,
+    "role": "user",
+    "premiumStatus": "free",
+    "acceptedLicense": true
+  },
+  {
+    "id": "user_2",
+    "name": "Мария Сидорова",
+    "avatarUrl": "https://example.com/avatar2.jpg",
+    "email": "maria@example.com",
+    "gender": "female",
+    "birthDate": "1998-03-22",
+    "age": 25,
+    "rating": 5.0,
+    "status": "active",
+    "blockedUntil": null,
+    "role": "user",
+    "premiumStatus": "physicalPremium",
+    "acceptedLicense": true
+  },
+  {
+    "id": "user_3",
+    "name": "Компания EventPro",
+    "avatarUrl": "https://example.com/avatar3.jpg",
+    "email": "events@eventpro.com",
+    "gender": null,
+    "birthDate": null,
+    "age": null,
+    "rating": 4.5,
+    "status": "active",
+    "blockedUntil": null,
+    "role": "user",
+    "premiumStatus": "businessLevel2",
+    "acceptedLicense": true
+  },
+  {
+    "id": "admin_1",
+    "name": "Админ Иван",
+    "avatarUrl": "https://example.com/admin.jpg",
+    "email": "admin@meetapp.com",
+    "gender": "male",
+    "birthDate": null,
+    "age": null,
+    "rating": 5.0,
+    "status": "active",
+    "blockedUntil": null,
+    "role": "admin",
+    "premiumStatus": "free",
+    "acceptedLicense": true
+  }
+]

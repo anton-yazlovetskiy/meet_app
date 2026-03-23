@@ -1,0 +1,29 @@
+[
+  {
+    "id": "msg_1",
+    "chatId": "chat_1",
+    "senderId": "user_1",
+    "text": "Ребята, кто идет на каток?",
+    "timestamp": "2026-03-23T10:30:00Z",
+    "status": "visible",
+    "messageType": "text"
+  },
+  {
+    "id": "msg_2",
+    "chatId": "chat_1",
+    "senderId": "user_2",
+    "text": "Я в деле! Предлагаю пятницу вечером.",
+    "timestamp": "2026-03-23T10:45:00Z",
+    "status": "visible",
+    "messageType": "text"
+  },
+  {
+    "id": "msg_3",
+    "chatId": "chat_2",
+    "senderId": "user_3",
+    "text": "Экскурсия начнется в 14:00. Всем собраться у входа в музей.",
+    "timestamp": "2026-03-20T13:00:00Z",
+    "status": "visible",
+    "messageType": "text"
+  }
+]
