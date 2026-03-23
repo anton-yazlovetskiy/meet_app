@@ -78,15 +78,23 @@ class _VotingPageState extends State<VotingPage> {
                             ? Colors.blue.shade50
                             : null,
                         child: ListTile(
-                          leading: Radio<String>(
-                            value: slot.slotId,
-                            groupValue: _selectedSlotId,
-                            onChanged: (value) {
-                              if (_event.finalSlotId == null) {
-                                setState(() => _selectedSlotId = value);
-                              }
-                            },
+                          leading: Icon(
+                            _event.finalSlotId != null
+                                ? Icons.check_circle
+                                : isSelected
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_off,
+                            color: isWinning
+                                ? Colors.green
+                                : isSelected
+                                ? Colors.blue
+                                : null,
                           ),
+                          onTap: _event.finalSlotId == null
+                              ? () {
+                                  setState(() => _selectedSlotId = slot.slotId);
+                                }
+                              : null,
                           title: Text('Слот ${slotIndex + 1}', style: TextStyle(fontWeight: isWinning ? FontWeight.bold : FontWeight.normal)),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

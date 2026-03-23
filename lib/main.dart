@@ -25,6 +25,9 @@ class _MeetAppState extends State<MeetApp> {
 
   @override
   Widget build(BuildContext context) {
+    final lightScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.light);
+    final darkScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark);
+
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: _themeModeNotifier,
       builder: (context, themeMode, child) {
@@ -36,16 +39,8 @@ class _MeetAppState extends State<MeetApp> {
               locale: locale,
               supportedLocales: AppLocalizations.supportedLocales,
               localizationsDelegates: [AppLocalizations.delegate, GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                useMaterial3: true,
-                brightness: Brightness.light,
-              ),
-              darkTheme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                useMaterial3: true,
-                brightness: Brightness.dark,
-              ),
+              theme: ThemeData.from(colorScheme: lightScheme, useMaterial3: true),
+              darkTheme: ThemeData.from(colorScheme: darkScheme, useMaterial3: true),
               themeMode: themeMode,
               initialRoute: '/',
               routes: {
