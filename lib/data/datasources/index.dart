@@ -8,4 +8,6 @@ export 'firebase/application_datasource_impl.dart';
 export 'firebase/chat_datasource.dart';
 export 'firebase/chat_datasource_impl.dart';
 export 'firebase/expense_notification_datasource.dart';
+export 'firebase/expense_notification_datasource_impl.dart';
+export 'firebase/user_datasource.dart';
 export 'firebase/user_datasource_impl.dart';

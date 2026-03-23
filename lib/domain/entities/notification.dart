@@ -34,7 +34,7 @@ class Notification {
   final String? actionLabel;
 
   /// Тип действия
-  final ActionType? actionType;
+  final NotificationActionType? actionType;
 
   const Notification({
     required this.id,
@@ -65,7 +65,7 @@ enum NotificationType {
 }
 
 /// Тип действия для уведомления
-enum ActionType {
+enum NotificationActionType {
   /// Добавить в календарь
   addToCalendar,
 

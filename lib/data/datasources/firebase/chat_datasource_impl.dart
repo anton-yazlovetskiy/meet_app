@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import '../../../domain/index.dart';
 import '../../../data/models/index.dart';
+import 'chat_datasource.dart';
 
 /// Mock реализация ChatRemoteDataSource
 class MockChatRemoteDataSourceImpl implements ChatRemoteDataSource {

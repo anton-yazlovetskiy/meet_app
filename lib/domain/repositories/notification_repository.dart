@@ -19,7 +19,7 @@ abstract class NotificationRepository {
     String? applicationId,
     Map<String, dynamic>? payload,
     String? actionLabel,
-    ActionType? actionType,
+    NotificationActionType? actionType,
   });
 
   /// Отметить уведомление как прочитанное

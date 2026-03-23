@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import '../../../domain/index.dart';
 import '../../../data/models/index.dart';
+import 'user_datasource.dart';
 import '../../repositories/user_repository_impl.dart';
 
 /// Mock реализация UserRemoteDataSource

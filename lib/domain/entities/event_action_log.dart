@@ -10,7 +10,7 @@ class EventActionLog {
   final String? targetUserId;
 
   /// Тип действия
-  final ActionType actionType;
+  final EventActionType actionType;
 
   /// Дополнительные данные (JSON)
   final Map<String, dynamic> payload;
@@ -29,7 +29,7 @@ class EventActionLog {
 }
 
 /// Тип действия
-enum ActionType {
+enum EventActionType {
   /// Создание мероприятия
   createEvent,
 

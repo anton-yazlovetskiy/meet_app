@@ -1,5 +1,5 @@
-import '../../domain/index.dart';
-import '../../data/models/index.dart';
+import '../../../domain/index.dart';
+import '../../../data/models/index.dart';
 
 /// Интерфейс для Application (заявки) datasource
 abstract class ApplicationRemoteDataSource {

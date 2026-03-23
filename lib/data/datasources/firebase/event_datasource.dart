@@ -1,5 +1,4 @@
-import '../../domain/index.dart';
-import '../../data/models/index.dart';
+import '../../../data/models/index.dart';
 
 /// Интерфейс для Event и Slot datasource
 abstract class EventRemoteDataSource {

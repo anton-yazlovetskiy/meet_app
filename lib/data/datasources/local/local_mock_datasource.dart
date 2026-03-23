@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import '../../domain/index.dart';
-import '../models/index.dart';
+import '../../../domain/index.dart';
+import '../../models/index.dart';
 
 /// Локальный datasource для загрузки моковых данных из JSON
 class LocalMockDataSource {

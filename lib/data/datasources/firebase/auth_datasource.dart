@@ -1,5 +1,4 @@
-import '../../domain/index.dart';
-import '../../data/models/index.dart';
+import '../../../data/models/index.dart';
 
 /// Интерфейс для Firebase auth datasource
 abstract class FirebaseAuthDataSource {

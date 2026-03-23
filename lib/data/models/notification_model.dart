@@ -13,10 +13,8 @@ class NotificationModel extends Notification {
     required super.createdAt,
     required super.isRead,
     super.actionLabel,
-    ActionType? actionType,
-  }) : super(
-          actionType: actionType,
-        );
+    super.actionType,
+  });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
@@ -31,7 +29,7 @@ class NotificationModel extends Notification {
       createdAt: DateTime.parse(json['createdAt'] as String),
       isRead: json['isRead'] as bool,
       actionLabel: json['actionLabel'] as String?,
-      actionType: json['actionType'] != null ? ActionType.values.byName(json['actionType'] as String) : null,
+      actionType: json['actionType'] != null ? NotificationActionType.values.byName(json['actionType'] as String) : null,
     );
   }
 

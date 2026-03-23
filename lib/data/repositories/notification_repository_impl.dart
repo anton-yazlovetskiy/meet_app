@@ -45,7 +45,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
     String? applicationId,
     Map<String, dynamic>? payload,
     String? actionLabel,
-    ActionType? actionType,
+    NotificationActionType? actionType,
   }) async {
     try {
       final notification = NotificationModel(

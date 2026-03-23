@@ -12,7 +12,7 @@ class CreateNotificationParams {
   final String? applicationId;
   final Map<String, dynamic>? payload;
   final String? actionLabel;
-  final ActionType? actionType;
+  final NotificationActionType? actionType;
 
   CreateNotificationParams({
     required this.userId,
