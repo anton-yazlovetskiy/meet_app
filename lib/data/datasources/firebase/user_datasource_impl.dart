@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 import '../../../domain/index.dart';
 import '../../../data/models/index.dart';
 import 'user_datasource.dart';
-import '../../repositories/user_repository_impl.dart';
 
 /// Mock реализация UserRemoteDataSource
 class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
@@ -31,13 +30,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<void> updateProfile({
-    required String userId,
-    String? name,
-    String? gender,
-    int? age,
-    String? avatarUrl,
-  }) async {
+  Future<void> updateProfile({required String userId, String? name, String? gender, int? age, String? avatarUrl}) async {
     final users = _loadUsers();
     final user = users[userId];
     if (user != null) {
@@ -59,11 +52,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<void> rateUser({
-    required String userId,
-    required double rating,
-    required String reviewerId,
-  }) async {
+  Future<void> rateUser({required String userId, required double rating, required String reviewerId}) async {
     final users = _loadUsers();
     final user = users[userId];
     if (user != null) {
@@ -90,11 +79,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<void> blockUser({
-    required String userId,
-    required DateTime blockedUntil,
-    required String reason,
-  }) async {
+  Future<void> blockUser({required String userId, required DateTime blockedUntil, required String reason}) async {
     final users = _loadUsers();
     final user = users[userId];
     if (user != null) {
@@ -139,10 +124,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<void> upgradePremium({
-    required String userId,
-    required PremiumStatus newStatus,
-  }) async {
+  Future<void> upgradePremium({required String userId, required PremiumStatus newStatus}) async {
     final users = _loadUsers();
     final user = users[userId];
     if (user != null) {

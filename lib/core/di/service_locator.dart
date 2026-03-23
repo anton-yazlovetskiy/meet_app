@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/index.dart';
@@ -171,6 +173,53 @@ Future<void> setupDependencyInjection() async {
   getIt.registerSingleton<GetUserNotificationsUseCase>(
     GetUserNotificationsUseCase(getIt<NotificationRepository>()),
   );
+
+  await _seedMockData();
+}
+
+Future<void> _seedMockData() async {
+  final prefs = getIt<SharedPreferences>();
+  final isSeeded = prefs.getBool('mock_data_seeded') ?? false;
+  if (isSeeded) return;
+
+  final localMockDataSource = getIt<LocalMockDataSource>();
+
+  final users = await localMockDataSource.loadUsers();
+  final userMap = users.fold<Map<String, dynamic>>({}, (map, user) {
+    map[user.id] = user.toJson();
+    return map;
+  });
+  prefs.setString('mock_users', jsonEncode(userMap));
+
+  final events = await localMockDataSource.loadEvents();
+  final eventMap = events.fold<Map<String, dynamic>>({}, (map, event) {
+    map[event.id] = event.toJson();
+    return map;
+  });
+  prefs.setString('mock_events', jsonEncode(eventMap));
+
+  final slots = await localMockDataSource.loadSlots();
+  final slotsByEvent = <String, List<Map<String, dynamic>>>{};
+  for (final slot in slots) {
+    slotsByEvent.putIfAbsent(slot.eventId, () => []).add(slot.toJson());
+  }
+  prefs.setString('mock_slots', jsonEncode(slotsByEvent));
+
+  final applications = await localMockDataSource.loadApplications();
+  final applicationsMap = applications.fold<Map<String, dynamic>>({}, (map, application) {
+    map[application.id] = application.toJson();
+    return map;
+  });
+  prefs.setString('mock_applications', jsonEncode(applicationsMap));
+
+  final chatMessages = await localMockDataSource.loadChatMessages();
+  final chatMessagesByChat = <String, List<Map<String, dynamic>>>{};
+  for (final message in chatMessages) {
+    chatMessagesByChat.putIfAbsent(message.chatId, () => []).add(message.toJson());
+  }
+  prefs.setString('mock_chat_messages', jsonEncode(chatMessagesByChat));
+
+  prefs.setBool('mock_data_seeded', true);
 }
 
 /// Mock Local Auth Datasource для разработки

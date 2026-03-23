@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
-import '../../../domain/index.dart';
 import '../../../data/models/index.dart';
 import 'expense_notification_datasource.dart';
 
@@ -50,19 +49,8 @@ class MockExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
   }
 
   @override
-  Future<ReceiptModel> uploadReceipt({
-    required String expenseId,
-    required String fileName,
-    required List<int> fileBytes,
-    required String uploadedBy,
-  }) async {
-    return ReceiptModel(
-      id: 'rec_${DateTime.now().millisecondsSinceEpoch}',
-      expenseId: expenseId,
-      fileUrl: 'https://storage.example.com/$fileName',
-      uploadedBy: uploadedBy,
-      createdAt: DateTime.now(),
-    );
+  Future<ReceiptModel> uploadReceipt({required String expenseId, required String fileName, required List<int> fileBytes, required String uploadedBy}) async {
+    return ReceiptModel(id: 'rec_${DateTime.now().millisecondsSinceEpoch}', expenseId: expenseId, fileUrl: 'https://storage.example.com/$fileName', uploadedBy: uploadedBy, createdAt: DateTime.now());
   }
 
   @override
@@ -92,11 +80,7 @@ class MockNotificationRemoteDataSourceImpl implements NotificationRemoteDataSour
   }
 
   @override
-  Future<List<NotificationModel>> getUserNotifications({
-    required String userId,
-    int limit = 50,
-    int offset = 0,
-  }) async {
+  Future<List<NotificationModel>> getUserNotifications({required String userId, int limit = 50, int offset = 0}) async {
     final notifications = _loadNotifications();
     final notifs = notifications[userId] ?? [];
     return notifs.skip(offset).take(limit).toList();
@@ -189,10 +173,7 @@ class MockNotificationLocalDataSourceImpl implements NotificationLocalDataSource
   }
 
   @override
-  Future<void> cacheNotifications(
-    String userId,
-    List<NotificationModel> notifications,
-  ) async {
+  Future<void> cacheNotifications(String userId, List<NotificationModel> notifications) async {
     final cache = _loadCache();
     cache[userId] = notifications;
     _saveCache(cache);

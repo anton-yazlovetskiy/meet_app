@@ -2,7 +2,6 @@ import '../../domain/repositories/user_repository.dart';
 import '../../domain/entities/index.dart';
 import '../../domain/exceptions/domain_exceptions.dart';
 import '../datasources/index.dart';
-import '../models/index.dart';
 
 /// Реализация UserRepository
 class UserRepositoryImpl implements UserRepository {
@@ -25,21 +24,9 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> updateProfile({
-    required String userId,
-    String? name,
-    String? gender,
-    int? age,
-    String? avatarUrl,
-  }) async {
+  Future<void> updateProfile({required String userId, String? name, String? gender, int? age, String? avatarUrl}) async {
     try {
-      await remoteDataSource.updateProfile(
-        userId: userId,
-        name: name,
-        gender: gender,
-        age: age,
-        avatarUrl: avatarUrl,
-      );
+      await remoteDataSource.updateProfile(userId: userId, name: name, gender: gender, age: age, avatarUrl: avatarUrl);
     } catch (e) {
       throw BusinessLogicException('Ошибка при обновлении профиля');
     }
@@ -56,37 +43,21 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> rateUser({
-    required String userId,
-    required double rating,
-    required String reviewerId,
-  }) async {
+  Future<void> rateUser({required String userId, required double rating, required String reviewerId}) async {
     try {
       if (rating < 1 || rating > 5) {
         throw ValidationException('Рейтинг должен быть от 1 до 5');
       }
-      await remoteDataSource.rateUser(
-        userId: userId,
-        rating: rating,
-        reviewerId: reviewerId,
-      );
+      await remoteDataSource.rateUser(userId: userId, rating: rating, reviewerId: reviewerId);
     } catch (e) {
       throw BusinessLogicException('Ошибка при установке рейтинга');
     }
   }
 
   @override
-  Future<void> blockUser({
-    required String userId,
-    required DateTime blockedUntil,
-    required String reason,
-  }) async {
+  Future<void> blockUser({required String userId, required DateTime blockedUntil, required String reason}) async {
     try {
-      await remoteDataSource.blockUser(
-        userId: userId,
-        blockedUntil: blockedUntil,
-        reason: reason,
-      );
+      await remoteDataSource.blockUser(userId: userId, blockedUntil: blockedUntil, reason: reason);
     } catch (e) {
       throw AuthorizationException('Ошибка при блокировке пользователя');
     }
@@ -112,15 +83,9 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> upgradePremium({
-    required String userId,
-    required PremiumStatus newStatus,
-  }) async {
+  Future<void> upgradePremium({required String userId, required PremiumStatus newStatus}) async {
     try {
-      await remoteDataSource.upgradePremium(
-        userId: userId,
-        newStatus: newStatus,
-      );
+      await remoteDataSource.upgradePremium(userId: userId, newStatus: newStatus);
     } catch (e) {
       throw BusinessLogicException('Ошибка при обновлении подписки');
     }

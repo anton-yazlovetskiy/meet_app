@@ -1,4 +1,3 @@
-import '../../../domain/index.dart';
 import '../../../data/models/index.dart';
 
 /// Интерфейс для Application (заявки) datasource
@@ -22,8 +21,5 @@ abstract class ApplicationRemoteDataSource {
   Future<void> cancelApplication(String applicationId);
 
   /// Получить заявку пользователя для мероприятия
-  Future<ApplicationModel?> getUserApplicationForEvent({
-    required String userId,
-    required String eventId,
-  });
+  Future<ApplicationModel?> getUserApplicationForEvent({required String userId, required String eventId});
 }

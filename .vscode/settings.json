@@ -1,0 +1,9 @@
+{
+  "dart.flutterRunArguments": [],
+  "dart.flutterTestArguments": [],
+  "dart.flutterCustomDevices": [],
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Dart-Code.dart-code"
+  }
+}

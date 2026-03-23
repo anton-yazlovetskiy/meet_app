@@ -209,12 +209,20 @@ class EventModel extends Event {
   }
 
   Map<String, dynamic> toJson() {
+    final locationMap = location is LocationModel ? (location as LocationModel).toJson() : LocationModel.fromEntity(location).toJson();
+
+    final votingPeriodMap = votingPeriod != null ? (votingPeriod is DateRangeModel ? (votingPeriod as DateRangeModel).toJson() : DateRangeModel.fromEntity(votingPeriod!).toJson()) : null;
+
+    final slotStatsList = slotStats.map((e) => e is SlotStatsModel ? e.toJson() : SlotStatsModel.fromEntity(e).toJson()).toList();
+
+    final expenseSummaryMap = expenseSummary is ExpenseSummaryModel ? (expenseSummary as ExpenseSummaryModel).toJson() : ExpenseSummaryModel.fromEntity(expenseSummary).toJson();
+
     return {
       'id': id,
       'title': title,
       'description': description,
       'tags': tags,
-      'location': (location as LocationModel).toJson(),
+      'location': locationMap,
       'isPublic': isPublic,
       'eventType': eventType.name,
       'creatorId': creatorId,
@@ -224,13 +232,13 @@ class EventModel extends Event {
       'createdAt': createdAt.toIso8601String(),
       'startLimit': startLimit.toIso8601String(),
       'status': status.name,
-      'votingPeriod': votingPeriod != null ? (votingPeriod as DateRangeModel).toJson() : null,
+      'votingPeriod': votingPeriodMap,
       'finalSlotId': finalSlotId,
       'participants': participants,
       'applicants': applicants,
-      'slotStats': slotStats.map((e) => (e as SlotStatsModel).toJson()).toList(),
+      'slotStats': slotStatsList,
       'chatId': chatId,
-      'expenseSummary': (expenseSummary as ExpenseSummaryModel).toJson(),
+      'expenseSummary': expenseSummaryMap,
       'isArchived': isArchived,
     };
   }
