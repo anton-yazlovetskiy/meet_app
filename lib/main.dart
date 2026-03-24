@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'core/di/service_locator.dart';
+import 'presentation/auth/auth_gate.dart';
+import 'presentation/auth/login_page.dart';
+import 'presentation/auth/license_page.dart' as auth_license;
 import 'presentation/event_list/event_list_page.dart';
 import 'presentation/event_list/event_create_page.dart';
 import 'presentation/settings/settings_page.dart';
@@ -44,7 +47,13 @@ class _MeetAppState extends State<MeetApp> {
               themeMode: themeMode,
               initialRoute: '/',
               routes: {
-                '/': (context) => EventListPage(onOpenSettings: () => Navigator.of(context).pushNamed('/settings')),
+                '/': (context) => const AuthGate(),
+                '/login': (context) => LoginPage(
+                  currentLocale: locale,
+                  onLocaleChanged: (value) => _localeNotifier.value = value,
+                ),
+                '/license': (context) => const auth_license.LicensePage(),
+                '/feed': (context) => EventListPage(onOpenSettings: () => Navigator.of(context).pushNamed('/settings')),
                 '/create': (context) => const EventCreatePage(),
                 '/settings': (context) => SettingsPage(
                   currentLocale: locale,

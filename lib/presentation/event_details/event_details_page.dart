@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import '../../domain/entities/index.dart';
 import '../../domain/repositories/index.dart';
+import '../../domain/usecases/application/application_usecases.dart';
 import '../voting/voting_page.dart';
 
 class EventDetailsPage extends StatefulWidget {
@@ -17,6 +18,14 @@ class EventDetailsPage extends StatefulWidget {
 class _EventDetailsPageState extends State<EventDetailsPage> {
   late Event _event;
   final _eventRepository = GetIt.instance<EventRepository>();
+  final _authRepository = GetIt.instance<AuthRepository>();
+  final _applicationRepository = GetIt.instance<ApplicationRepository>();
+  final _createApplicationUseCase = GetIt.instance<CreateApplicationUseCase>();
+  final _cancelApplicationUseCase = GetIt.instance<CancelApplicationUseCase>();
+
+  User? _currentUser;
+  Application? _userApplication;
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -25,15 +34,29 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     _refreshEvent();
   }
 
+  Future<void> _loadUserApplicationState() async {
+    final user = await _authRepository.getCurrentUser();
+    if (user == null) return;
+
+    setState(() {
+      _currentUser = user;
+    });
+
+    final application = await _applicationRepository.getUserApplicationForEvent(userId: user.id, eventId: _event.id);
+
+    setState(() {
+      _userApplication = application;
+    });
+  }
+
   Future<void> _refreshEvent() async {
     try {
       final updated = await _eventRepository.getEventById(_event.id);
       setState(() => _event = updated);
+      await _loadUserApplicationState();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка загрузки: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка загрузки: $e')));
     }
   }
 
@@ -50,12 +73,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_event.title, overflow: TextOverflow.ellipsis),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _refreshEvent,
-          ),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _refreshEvent)],
       ),
       body: RefreshIndicator(
         onRefresh: _refreshEvent,
@@ -99,9 +117,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   backgroundColor: _getStatusColor(_event.status),
                   labelStyle: const TextStyle(color: Colors.white),
                 ),
-                Chip(
-                  label: Text(_event.eventType.name.toUpperCase()),
-                ),
+                Chip(label: Text(_event.eventType.name.toUpperCase())),
               ],
             ),
             const SizedBox(height: 12),
@@ -155,11 +171,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               children: [
                 Text('Координаты: ${_event.location.lat.toStringAsFixed(4)}, ${_event.location.lng.toStringAsFixed(4)}'),
                 const SizedBox(height: 8),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.map),
-                  label: const Text('Открыть на карте'),
-                ),
+                TextButton.icon(onPressed: () {}, icon: const Icon(Icons.map), label: const Text('Открыть на карте')),
               ],
             ),
           ),
@@ -174,25 +186,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       children: [
         Text('Сроки', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        ListTile(
-          leading: const Icon(Icons.calendar_today),
-          title: const Text('Дата начала'),
-          subtitle: Text(_formatDate(_event.startLimit)),
-          contentPadding: EdgeInsets.zero,
-        ),
-        ListTile(
-          leading: const Icon(Icons.today),
-          title: const Text('Создано'),
-          subtitle: Text(_formatDate(_event.createdAt)),
-          contentPadding: EdgeInsets.zero,
-        ),
+        ListTile(leading: const Icon(Icons.calendar_today), title: const Text('Дата начала'), subtitle: Text(_formatDate(_event.startLimit)), contentPadding: EdgeInsets.zero),
+        ListTile(leading: const Icon(Icons.today), title: const Text('Создано'), subtitle: Text(_formatDate(_event.createdAt)), contentPadding: EdgeInsets.zero),
         if (_event.votingPeriod != null)
           ListTile(
             leading: const Icon(Icons.how_to_vote),
             title: const Text('Период голосования'),
-            subtitle: Text(
-              '${_formatDateOnly(_event.votingPeriod!.start)} - ${_formatDateOnly(_event.votingPeriod!.end)}',
-            ),
+            subtitle: Text('${_formatDateOnly(_event.votingPeriod!.start)} - ${_formatDateOnly(_event.votingPeriod!.end)}'),
             contentPadding: EdgeInsets.zero,
           ),
       ],
@@ -250,36 +250,30 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       children: [
         Text('Слоты голосования', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        ...List.generate(
-          _event.slotStats.length,
-          (index) {
-            final slot = _event.slotStats[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Слот ${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          Text('${slot.votes} голос(ов)', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                        ],
-                      ),
+        ...List.generate(_event.slotStats.length, (index) {
+          final slot = _event.slotStats[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Слот ${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text('${slot.votes} голос(ов)', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
                     ),
-                    LinearProgressIndicator(
-                      value: _event.applicants.isEmpty ? 0 : slot.votes / _event.applicants.length,
-                      minHeight: 8,
-                    ),
-                  ],
-                ),
+                  ),
+                  LinearProgressIndicator(value: _event.applicants.isEmpty ? 0 : slot.votes / _event.applicants.length, minHeight: 8),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        }),
       ],
     );
   }
@@ -294,15 +288,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       children: [
         Text('Теги', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          children: _event.tags.map((tag) => Chip(label: Text(tag))).toList(),
-        ),
+        Wrap(spacing: 8, children: _event.tags.map((tag) => Chip(label: Text(tag))).toList()),
       ],
     );
   }
 
   Widget _buildActionButtons() {
+    final hasApplication = _userApplication != null && _userApplication!.status != ApplicationStatus.cancelled;
+
     return Column(
       children: [
         if (_event.eventType == EventType.voting && _event.votingPeriod != null)
@@ -310,11 +303,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => VotingPage(event: _event),
-                  ),
-                );
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => VotingPage(event: _event)));
               },
               icon: const Icon(Icons.how_to_vote),
               label: const Text('Голосовать'),
@@ -323,25 +312,53 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         else
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: null,
-              icon: const Icon(Icons.how_to_vote),
-              label: const Text('Голосовать'),
-            ),
+            child: ElevatedButton.icon(onPressed: null, icon: const Icon(Icons.how_to_vote), label: const Text('Голосовать')),
           ),
         const SizedBox(height: 8),
         SizedBox(
           width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Функция подачи заявки в разработке')),
-              );
-            },
+          child: ElevatedButton.icon(
+            onPressed: _isProcessing
+                ? null
+                : () async {
+                    if (_currentUser == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Требуется авторизация для подачи заявки')));
+                      return;
+                    }
+
+                    if (hasApplication) {
+                      final appId = _userApplication!.id;
+                      setState(() => _isProcessing = true);
+                      try {
+                        await _cancelApplicationUseCase.call(CancelApplicationParams(applicationId: appId));
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Заявка отменена')));
+                        await _refreshEvent();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка отмены заявки: $e')));
+                      } finally {
+                        setState(() => _isProcessing = false);
+                      }
+                      return;
+                    }
+
+                    setState(() => _isProcessing = true);
+                    try {
+                      final selectedSlots = _event.slotStats.isNotEmpty ? [_event.slotStats.first.slotId] : <String>[];
+                      await _createApplicationUseCase.call(CreateApplicationParams(eventId: _event.id, userId: _currentUser!.id, selectedSlotIds: selectedSlots));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Заявка подана')));
+                      await _refreshEvent();
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка подачи заявки: $e')));
+                    } finally {
+                      setState(() => _isProcessing = false);
+                    }
+                  },
             icon: const Icon(Icons.app_registration),
-            label: const Text('Подать заявку'),
+            label: Text(hasApplication ? 'Отменить заявку' : 'Подать заявку'),
           ),
         ),
+        const SizedBox(height: 8),
+        if (_userApplication != null) Text('Статус заявки: ${_userApplication!.status.name}', style: const TextStyle(fontWeight: FontWeight.w500)),
       ],
     );
   }
