@@ -1,3 +1,4 @@
+import 'dart:ui';
 import '../../../data/models/index.dart';
 
 /// Интерфейс для Firebase auth datasource
@@ -6,13 +7,13 @@ abstract class FirebaseAuthDataSource {
   Future<UserModel?> getCurrentUser();
 
   /// Войти через Google
-  Future<UserModel> signInWithGoogle();
+  Future<UserModel> signInWithGoogle(Locale locale);
 
   /// Войти через Apple
-  Future<UserModel> signInWithApple();
+  Future<UserModel> signInWithApple(Locale locale);
 
   /// Войти через Twitter
-  Future<UserModel> signInWithTwitter();
+  Future<UserModel> signInWithTwitter(Locale locale);
 
   /// Выйти
   Future<void> signOut();

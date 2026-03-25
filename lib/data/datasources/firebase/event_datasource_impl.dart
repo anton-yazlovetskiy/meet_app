@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import '../../../domain/index.dart';
 import '../../../data/models/index.dart';
 import 'event_datasource.dart';
@@ -8,59 +9,98 @@ import 'event_datasource.dart';
 /// Mock реализация EventRemoteDataSource
 class MockEventRemoteDataSourceImpl implements EventRemoteDataSource {
   final SharedPreferences _prefs = GetIt.instance<SharedPreferences>();
+  final Logger _logger = GetIt.instance<Logger>();
   static const String _eventsKey = 'mock_events';
   static const String _slotsKey = 'mock_slots';
 
   Map<String, EventModel> _loadEvents() {
-    final json = _prefs.getString(_eventsKey) ?? '{}';
-    final Map<String, dynamic> data = jsonDecode(json);
-    return data.map((k, v) => MapEntry(k, EventModel.fromJson(v)));
+    try {
+      final json = _prefs.getString(_eventsKey) ?? '{}';
+      final Map<String, dynamic> data = jsonDecode(json);
+      final events = data.map((k, v) => MapEntry(k, EventModel.fromJson(v)));
+      _logger.d('Loaded ${events.length} events from storage');
+      return events;
+    } catch (e, stack) {
+      _logger.e('Error loading events: $e', error: e, stackTrace: stack);
+      return {};
+    }
   }
 
   void _saveEvents(Map<String, EventModel> events) {
-    final json = jsonEncode(events.map((k, v) => MapEntry(k, v.toJson())));
-    _prefs.setString(_eventsKey, json);
+    try {
+      final json = jsonEncode(events.map((k, v) => MapEntry(k, v.toJson())));
+      _prefs.setString(_eventsKey, json);
+      _logger.d('Saved ${events.length} events to storage');
+    } catch (e, stack) {
+      _logger.e('Error saving events: $e', error: e, stackTrace: stack);
+    }
   }
 
   Map<String, List<SlotModel>> _loadSlots() {
-    final json = _prefs.getString(_slotsKey) ?? '{}';
-    final Map<String, dynamic> data = jsonDecode(json);
-    return data.map((k, v) => MapEntry(k, (v as List).map((e) => SlotModel.fromJson(e)).toList()));
+    try {
+      final json = _prefs.getString(_slotsKey) ?? '{}';
+      final Map<String, dynamic> data = jsonDecode(json);
+      final slots = data.map((k, v) => MapEntry(k, (v as List).map((e) => SlotModel.fromJson(e)).toList()));
+      _logger.d('Loaded slots for ${slots.length} events');
+      return slots;
+    } catch (e, stack) {
+      _logger.e('Error loading slots: $e', error: e, stackTrace: stack);
+      return {};
+    }
   }
 
   void _saveSlots(Map<String, List<SlotModel>> slots) {
-    final json = jsonEncode(slots.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())));
-    _prefs.setString(_slotsKey, json);
+    try {
+      final json = jsonEncode(slots.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())));
+      _prefs.setString(_slotsKey, json);
+      _logger.d('Saved slots for ${slots.length} events');
+    } catch (e, stack) {
+      _logger.e('Error saving slots: $e', error: e, stackTrace: stack);
+    }
   }
 
   @override
   Future<EventModel> createEvent(EventModel event) async {
-    final events = _loadEvents();
-    events[event.id] = event;
-    _saveEvents(events);
-    return event;
+    try {
+      final events = _loadEvents();
+      events[event.id] = event;
+      _saveEvents(events);
+      _logger.i('Created event: ${event.title}');
+      return event;
+    } catch (e, stack) {
+      _logger.e('Error creating event: $e', error: e, stackTrace: stack);
+      rethrow;
+    }
   }
 
   @override
   Future<EventModel> getEventById(String eventId) async {
-    final events = _loadEvents();
-    final event = events[eventId];
-    if (event == null) throw Exception('Event not found');
-    return event;
+    try {
+      final events = _loadEvents();
+      final event = events[eventId];
+      if (event == null) {
+        _logger.w('Event not found: $eventId');
+        throw Exception('Event not found');
+      }
+      _logger.d('Retrieved event: ${event.title}');
+      return event;
+    } catch (e, stack) {
+      _logger.e('Error getting event by id $eventId: $e', error: e, stackTrace: stack);
+      rethrow;
+    }
   }
 
   @override
-  Future<List<EventModel>> listEvents({
-    String? userId,
-    List<String>? tags,
-    bool? isPublic,
-    String? status,
-    String? searchQuery,
-    int limit = 20,
-    int offset = 0,
-  }) async {
-    final events = _loadEvents();
-    return events.values.toList();
+  Future<List<EventModel>> listEvents({String? userId, List<String>? tags, bool? isPublic, String? status, String? searchQuery, int limit = 20, int offset = 0}) async {
+    try {
+      final events = _loadEvents();
+      var filtered = events.values.toList();
+      _logger.d('Listing events: total ${filtered.length}, filters: userId=$userId, tags=$tags, status=$status, search=$searchQuery');
+      return filtered;
+    } catch (e, stack) {
+      _logger.e('Error listing events: $e', error: e, stackTrace: stack);
+      rethrow;
+    }
   }
 
   @override

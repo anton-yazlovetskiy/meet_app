@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:meet_app/data/datasources/firebase/event_datasource_impl.dart';
 import 'package:meet_app/data/models/event_model.dart';
 import 'package:meet_app/domain/entities/index.dart';
@@ -15,6 +16,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       mockPrefs = await SharedPreferences.getInstance();
       GetIt.instance.registerSingleton<SharedPreferences>(mockPrefs);
+      GetIt.instance.registerSingleton<Logger>(Logger());
 
       dataSource = MockEventRemoteDataSourceImpl();
     });
@@ -144,10 +146,7 @@ void main() {
       await dataSource.createEvent(event);
       await dataSource.deleteEvent('test_1');
 
-      expect(
-        () => dataSource.getEventById('test_1'),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => dataSource.getEventById('test_1'), throwsA(isA<Exception>()));
     });
 
     test('should get user created events', () async {

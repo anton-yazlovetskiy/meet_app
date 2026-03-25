@@ -13,11 +13,7 @@ class LocationConverter implements JsonConverter<Location, Map<String, dynamic>>
 
   @override
   Map<String, dynamic> toJson(Location object) {
-    return LocationModel(
-      lat: object.lat,
-      lng: object.lng,
-      mapLink: object.mapLink,
-    ).toJson();
+    return LocationModel(lat: object.lat, lng: object.lng, mapLink: object.mapLink).toJson();
   }
 }
 
@@ -33,10 +29,7 @@ class DateRangeConverter implements JsonConverter<DateRange?, Map<String, dynami
   @override
   Map<String, dynamic>? toJson(DateRange? object) {
     if (object == null) return null;
-    return DateRangeModel(
-      start: object.start,
-      end: object.end,
-    ).toJson();
+    return DateRangeModel(start: object.start, end: object.end).toJson();
   }
 }
 
@@ -50,11 +43,7 @@ class SlotStatsConverter implements JsonConverter<SlotStats, Map<String, dynamic
 
   @override
   Map<String, dynamic> toJson(SlotStats object) {
-    return SlotStatsModel(
-      slotId: object.slotId,
-      votes: object.votes,
-      voters: object.voters,
-    ).toJson();
+    return SlotStatsModel(slotId: object.slotId, votes: object.votes, voters: object.voters).toJson();
   }
 }
 
@@ -68,90 +57,59 @@ class ExpenseSummaryConverter implements JsonConverter<ExpenseSummary, Map<Strin
 
   @override
   Map<String, dynamic> toJson(ExpenseSummary object) {
-    return ExpenseSummaryModel(
-      totalAmount: object.totalAmount,
-      receiptCount: object.receiptCount,
-    ).toJson();
+    return ExpenseSummaryModel(totalAmount: object.totalAmount, receiptCount: object.receiptCount).toJson();
   }
 }
 
 @JsonSerializable()
 class LocationModel extends Location {
-  LocationModel({
-    required super.lat,
-    required super.lng,
-    required super.mapLink,
-  });
+  LocationModel({required super.lat, required super.lng, required super.mapLink});
 
   factory LocationModel.fromJson(Map<String, dynamic> json) => _$LocationModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$LocationModelToJson(this);
 
   factory LocationModel.fromEntity(Location location) {
-    return LocationModel(
-      lat: location.lat,
-      lng: location.lng,
-      mapLink: location.mapLink,
-    );
+    return LocationModel(lat: location.lat, lng: location.lng, mapLink: location.mapLink);
   }
 }
 
 @JsonSerializable()
 class DateRangeModel extends DateRange {
-  DateRangeModel({
-    required super.start,
-    required super.end,
-  });
+  DateRangeModel({required super.start, required super.end});
 
   factory DateRangeModel.fromJson(Map<String, dynamic> json) => _$DateRangeModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$DateRangeModelToJson(this);
 
   factory DateRangeModel.fromEntity(DateRange dateRange) {
-    return DateRangeModel(
-      start: dateRange.start,
-      end: dateRange.end,
-    );
+    return DateRangeModel(start: dateRange.start, end: dateRange.end);
   }
 }
 
 @JsonSerializable()
 class SlotStatsModel extends SlotStats {
-  SlotStatsModel({
-    required super.slotId,
-    required super.votes,
-    required super.voters,
-  });
+  SlotStatsModel({required super.slotId, required super.votes, required super.voters});
 
   factory SlotStatsModel.fromJson(Map<String, dynamic> json) => _$SlotStatsModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SlotStatsModelToJson(this);
 
   factory SlotStatsModel.fromEntity(SlotStats slotStats) {
-    return SlotStatsModel(
-      slotId: slotStats.slotId,
-      votes: slotStats.votes,
-      voters: slotStats.voters,
-    );
+    return SlotStatsModel(slotId: slotStats.slotId, votes: slotStats.votes, voters: slotStats.voters);
   }
 }
 
 @JsonSerializable()
 class ExpenseSummaryModel extends ExpenseSummary {
-  ExpenseSummaryModel({
-    required super.totalAmount,
-    required super.receiptCount,
-  });
+  ExpenseSummaryModel({required super.totalAmount, required super.receiptCount});
 
   factory ExpenseSummaryModel.fromJson(Map<String, dynamic> json) => _$ExpenseSummaryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ExpenseSummaryModelToJson(this);
 
   factory ExpenseSummaryModel.fromEntity(ExpenseSummary summary) {
-    return ExpenseSummaryModel(
-      totalAmount: summary.totalAmount,
-      receiptCount: summary.receiptCount,
-    );
+    return ExpenseSummaryModel(totalAmount: summary.totalAmount, receiptCount: summary.receiptCount);
   }
 }
 
@@ -183,28 +141,30 @@ class EventModel extends Event {
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      tags: List<String>.from(json['tags'] as List),
-      location: LocationModel.fromJson(json['location'] as Map<String, dynamic>),
-      isPublic: json['isPublic'] as bool,
-      eventType: EventType.values.byName(json['eventType'] as String),
-      creatorId: json['creatorId'] as String,
-      managers: List<String>.from(json['managers'] as List),
-      maxParticipants: json['maxParticipants'] as int?,
-      price: (json['price'] as num).toDouble(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      startLimit: DateTime.parse(json['startLimit'] as String),
-      status: EventStatus.values.byName(json['status'] as String),
-      votingPeriod: json['votingPeriod'] != null ? DateRangeModel.fromJson(json['votingPeriod'] as Map<String, dynamic>) : null,
-      finalSlotId: json['finalSlotId'] as String?,
-      participants: List<String>.from(json['participants'] as List),
-      applicants: List<String>.from(json['applicants'] as List),
-      slotStats: (json['slotStats'] as List).map((e) => SlotStatsModel.fromJson(e as Map<String, dynamic>)).toList(),
-      chatId: json['chatId'] as String,
-      expenseSummary: ExpenseSummaryModel.fromJson(json['expenseSummary'] as Map<String, dynamic>),
-      isArchived: json['isArchived'] as bool,
+      id: json['id']?.toString() ?? 'unknown',
+      title: json['title']?.toString() ?? 'No title',
+      description: json['description']?.toString() ?? 'No description',
+      tags: json['tags'] is List ? List<String>.from(json['tags']) : [],
+      location: json['location'] is Map<String, dynamic> ? LocationModel.fromJson(json['location']) : LocationModel(lat: 0, lng: 0, mapLink: ''),
+      isPublic: json['isPublic'] is bool ? json['isPublic'] : true,
+      eventType: json['eventType'] is String ? EventType.values.byName(json['eventType']) : EventType.fixed,
+      creatorId: json['creatorId']?.toString() ?? 'unknown',
+      managers: json['managers'] is List ? List<String>.from(json['managers']) : [],
+      maxParticipants: json['maxParticipants'] is int ? json['maxParticipants'] : null,
+      price: json['price'] is num ? json['price'].toDouble() : 0.0,
+      createdAt: json['createdAt'] is String ? DateTime.tryParse(json['createdAt']) ?? DateTime.now() : DateTime.now(),
+      startLimit: json['startLimit'] is String ? DateTime.tryParse(json['startLimit']) ?? DateTime.now().add(const Duration(days: 30)) : DateTime.now().add(const Duration(days: 30)),
+      status: json['status'] is String ? EventStatus.values.byName(json['status']) : EventStatus.planned,
+      votingPeriod: json['votingPeriod'] is Map<String, dynamic> ? DateRangeModel.fromJson(json['votingPeriod']) : null,
+      finalSlotId: json['finalSlotId']?.toString(),
+      participants: json['participants'] is List ? List<String>.from(json['participants']) : [],
+      applicants: json['applicants'] is List ? List<String>.from(json['applicants']) : [],
+      slotStats: json['slotStats'] is List
+          ? json['slotStats'].map<SlotStatsModel>((e) => e is Map<String, dynamic> ? SlotStatsModel.fromJson(e) : SlotStatsModel(slotId: 'unknown', votes: 0, voters: [])).toList()
+          : [],
+      chatId: json['chatId']?.toString() ?? 'default_chat',
+      expenseSummary: json['expenseSummary'] is Map<String, dynamic> ? ExpenseSummaryModel.fromJson(json['expenseSummary']) : ExpenseSummaryModel(totalAmount: 0, receiptCount: 0),
+      isArchived: json['isArchived'] is bool ? json['isArchived'] : false,
     );
   }
 

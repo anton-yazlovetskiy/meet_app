@@ -1,3 +1,4 @@
+import 'dart:ui';
 import '../entities/index.dart';
 
 /// Интерфейс репозитория аутентификации
@@ -6,13 +7,13 @@ abstract class AuthRepository {
   Future<User?> getCurrentUser();
 
   /// Войти через Google
-  Future<User> signInWithGoogle();
+  Future<User> signInWithGoogle(Locale locale);
 
   /// Войти через Apple
-  Future<User> signInWithApple();
+  Future<User> signInWithApple(Locale locale);
 
   /// Войти через Twitter
-  Future<User> signInWithTwitter();
+  Future<User> signInWithTwitter(Locale locale);
 
   /// Выйти
   Future<void> signOut();

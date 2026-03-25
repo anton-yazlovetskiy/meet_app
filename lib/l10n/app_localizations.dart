@@ -295,6 +295,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit'**
   String get edit;
+
+  /// No description provided for @loginWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with'**
+  String get loginWith;
+
+  /// No description provided for @rulesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Rules'**
+  String get rulesTitle;
+
+  /// No description provided for @rules1.
+  ///
+  /// In en, this message translates to:
+  /// **'• Spam and fraud prohibition'**
+  String get rules1;
+
+  /// No description provided for @rules2.
+  ///
+  /// In en, this message translates to:
+  /// **'• Insults and discrimination prohibition'**
+  String get rules2;
+
+  /// No description provided for @rules3.
+  ///
+  /// In en, this message translates to:
+  /// **'• Illegal actions prohibition'**
+  String get rules3;
+
+  /// No description provided for @rules4.
+  ///
+  /// In en, this message translates to:
+  /// **'• Disclaimer for user actions'**
+  String get rules4;
+
+  /// No description provided for @licenseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'License Agreement'**
+  String get licenseButton;
+
+  /// No description provided for @licenseText.
+  ///
+  /// In en, this message translates to:
+  /// **'By registering, you confirm that you have read and agree to all terms of the license agreement.'**
+  String get licenseText;
+
+  /// No description provided for @tariffsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tariffs'**
+  String get tariffsTitle;
+
+  /// No description provided for @tariffPhysicalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Individuals'**
+  String get tariffPhysicalTitle;
+
+  /// No description provided for @tariffPhysicalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic access'**
+  String get tariffPhysicalDesc;
+
+  /// No description provided for @tariffPhysicalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'0 ₽'**
+  String get tariffPhysicalPrice;
+
+  /// No description provided for @tariffPhysicalFeature1.
+  ///
+  /// In en, this message translates to:
+  /// **'View events'**
+  String get tariffPhysicalFeature1;
+
+  /// No description provided for @tariffPhysicalFeature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Participate in voting'**
+  String get tariffPhysicalFeature2;
+
+  /// No description provided for @searchEventsInYourCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for events in your city'**
+  String get searchEventsInYourCity;
+
+  /// No description provided for @tagsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tagsLabel;
+
+  /// No description provided for @myEventsFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by me'**
+  String get myEventsFilter;
+
+  /// No description provided for @participatingFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Participating'**
+  String get participatingFilter;
+
+  /// No description provided for @appliedFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get appliedFilter;
+
+  /// No description provided for @archivedFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get archivedFilter;
+
+  /// No description provided for @applicationCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'You cancelled your application for'**
+  String get applicationCancelled;
+
+  /// No description provided for @applicationSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'You applied for'**
+  String get applicationSubmitted;
+
+  /// No description provided for @errorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get errorMessage;
+
+  /// No description provided for @invalidMapUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid map URL'**
+  String get invalidMapUrl;
+
+  /// No description provided for @failedOpenMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open map'**
+  String get failedOpenMap;
+
+  /// No description provided for @tariffBusiness1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Business L1'**
+  String get tariffBusiness1Title;
+
+  /// No description provided for @tariffBusiness1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced tools'**
+  String get tariffBusiness1Desc;
+
+  /// No description provided for @tariffBusiness1Price.
+  ///
+  /// In en, this message translates to:
+  /// **'1490 ₽'**
+  String get tariffBusiness1Price;
+
+  /// No description provided for @tariffBusiness1Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Create events'**
+  String get tariffBusiness1Feature1;
+
+  /// No description provided for @tariffBusiness1Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage participants'**
+  String get tariffBusiness1Feature2;
+
+  /// No description provided for @tariffBusiness1Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get tariffBusiness1Feature3;
+
+  /// No description provided for @tariffBusiness2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Business L2'**
+  String get tariffBusiness2Title;
+
+  /// No description provided for @tariffBusiness2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority support'**
+  String get tariffBusiness2Desc;
+
+  /// No description provided for @tariffBusiness2Price.
+  ///
+  /// In en, this message translates to:
+  /// **'2990 ₽'**
+  String get tariffBusiness2Price;
+
+  /// No description provided for @tariffBusiness2Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'All from L1'**
+  String get tariffBusiness2Feature1;
+
+  /// No description provided for @tariffBusiness2Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority support'**
+  String get tariffBusiness2Feature2;
+
+  /// No description provided for @tariffBusiness2Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'API access'**
+  String get tariffBusiness2Feature3;
+
+  /// No description provided for @tariffBusiness3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Business L3'**
+  String get tariffBusiness3Title;
+
+  /// No description provided for @tariffBusiness3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum capabilities'**
+  String get tariffBusiness3Desc;
+
+  /// No description provided for @tariffBusiness3Price.
+  ///
+  /// In en, this message translates to:
+  /// **'4990 ₽'**
+  String get tariffBusiness3Price;
+
+  /// No description provided for @tariffBusiness3Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'All from L2'**
+  String get tariffBusiness3Feature1;
+
+  /// No description provided for @tariffBusiness3Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto moderation'**
+  String get tariffBusiness3Feature2;
+
+  /// No description provided for @tariffBusiness3Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Customization'**
+  String get tariffBusiness3Feature3;
+
+  /// No description provided for @locationParsingError_invalidUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'The provided link is not a valid URL.'**
+  String get locationParsingError_invalidUrl;
+
+  /// No description provided for @locationParsingError_unsupportedMapProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Only Google Maps and Yandex Maps links are supported.'**
+  String get locationParsingError_unsupportedMapProvider;
+
+  /// No description provided for @locationParsingError_parsingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not extract coordinates from the link. Please check the link or enter the address manually.'**
+  String get locationParsingError_parsingFailed;
+
+  /// No description provided for @locationParsingError_networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Could not resolve the short link. Please check your internet connection.'**
+  String get locationParsingError_networkError;
 }
 
 class _AppLocalizationsDelegate

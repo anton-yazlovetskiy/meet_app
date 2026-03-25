@@ -11,11 +11,7 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   ApplicationRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Application> createApplication({
-    required String eventId,
-    required String userId,
-    required List<String> selectedSlotIds,
-  }) async {
+  Future<Application> createApplication({required String eventId, required String userId, required List<String> selectedSlotIds}) async {
     try {
       final application = ApplicationModel(
         id: 'app_${DateTime.now().millisecondsSinceEpoch}',
@@ -60,10 +56,7 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   }
 
   @override
-  Future<void> updateApplicationSlots({
-    required String applicationId,
-    required List<String> selectedSlotIds,
-  }) async {
+  Future<void> updateApplicationSlots({required String applicationId, required List<String> selectedSlotIds}) async {
     try {
       await remoteDataSource.updateApplicationSlots(applicationId, selectedSlotIds);
     } catch (e) {
@@ -75,15 +68,6 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   Future<void> approveApplication(String applicationId) async {
     try {
       final app = await getApplicationById(applicationId);
-      final updated = ApplicationModel(
-        id: app.id,
-        eventId: app.eventId,
-        userId: app.userId,
-        selectedSlotIds: app.selectedSlotIds,
-        status: ApplicationStatus.approved,
-        updatedAt: DateTime.now(),
-        createdAt: app.createdAt,
-      );
       await remoteDataSource.updateApplicationSlots(applicationId, app.selectedSlotIds);
     } catch (e) {
       throw BusinessLogicException('Ошибка при одобрении заявки');
@@ -93,16 +77,7 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   @override
   Future<void> rejectApplication(String applicationId) async {
     try {
-      final app = await getApplicationById(applicationId);
-      final updated = ApplicationModel(
-        id: app.id,
-        eventId: app.eventId,
-        userId: app.userId,
-        selectedSlotIds: app.selectedSlotIds,
-        status: ApplicationStatus.rejected,
-        updatedAt: DateTime.now(),
-        createdAt: app.createdAt,
-      );
+      await getApplicationById(applicationId);
     } catch (e) {
       throw BusinessLogicException('Ошибка при отклонении заявки');
     }
@@ -111,31 +86,16 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   @override
   Future<void> cancelApplication(String applicationId) async {
     try {
-      final app = await getApplicationById(applicationId);
-      final updated = ApplicationModel(
-        id: app.id,
-        eventId: app.eventId,
-        userId: app.userId,
-        selectedSlotIds: app.selectedSlotIds,
-        status: ApplicationStatus.cancelled,
-        updatedAt: DateTime.now(),
-        createdAt: app.createdAt,
-      );
+      await getApplicationById(applicationId);
     } catch (e) {
       throw BusinessLogicException('Ошибка при отмене заявки');
     }
   }
 
   @override
-  Future<Application?> getUserApplicationForEvent({
-    required String userId,
-    required String eventId,
-  }) async {
+  Future<Application?> getUserApplicationForEvent({required String userId, required String eventId}) async {
     try {
-      return await remoteDataSource.getUserApplicationForEvent(
-        userId: userId,
-        eventId: eventId,
-      );
+      return await remoteDataSource.getUserApplicationForEvent(userId: userId, eventId: eventId);
     } catch (e) {
       return null;
     }

@@ -33,6 +33,9 @@ class User {
   /// Роль (user/admin)
   final UserRole role;
 
+  /// Город
+  final String? city;
+
   /// Премиум статус
   final PremiumStatus premiumStatus;
 
@@ -53,6 +56,7 @@ class User {
     required this.role,
     required this.premiumStatus,
     required this.acceptedLicense,
+    this.city,
   });
 }
 

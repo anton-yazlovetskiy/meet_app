@@ -17,7 +17,9 @@ class _AuthGateState extends State<AuthGate> {
   @override
   void initState() {
     super.initState();
-    _checkAuthentication();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAuthentication();
+    });
   }
 
   Future<void> _checkAuthentication() async {
@@ -25,12 +27,6 @@ class _AuthGateState extends State<AuthGate> {
       final user = await _authRepository.getCurrentUser();
       if (user == null) {
         Navigator.of(context).pushReplacementNamed('/login');
-        return;
-      }
-
-      final hasAccepted = user.acceptedLicense || await _authRepository.hasAcceptedLicense(user.id);
-      if (!hasAccepted) {
-        Navigator.of(context).pushReplacementNamed('/license');
         return;
       }
 

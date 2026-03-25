@@ -18,13 +18,13 @@ class Event {
   /// Открытое или закрытое по ссылке
   final bool isPublic;
 
-  /// Тип мероприятия (voting/fixed, только при создании)
+  /// Тип мероприятия (voting/fixed, меняется только при создании/фиксации результатов голосования)
   final EventType eventType;
 
   /// ID создателя
   final String creatorId;
 
-  /// Список менеджеров (ID пользователей)
+  /// Список менеджеров (ID пользователей). Создатель всегда менеджер, его нет в этом списке
   final List<String> managers;
 
   /// Максимальное количество участников
@@ -36,7 +36,7 @@ class Event {
   /// Дата создания
   final DateTime createdAt;
 
-  /// Лимит старта (30 дней для free, 2-3 мес для premium)
+  /// Лимит старта (30 дней для free, бОльшие сроки для premium)
   final DateTime startLimit;
 
   /// Статус мероприятия
@@ -63,7 +63,7 @@ class Event {
   /// Сводка расходов
   final ExpenseSummary expenseSummary;
 
-  /// Архивное ли
+  /// Архивное
   final bool isArchived;
 
   const Event({
@@ -95,22 +95,21 @@ class Event {
 /// Локация мероприятия
 class Location {
   /// Широта
-  final double lat;
+  final double? lat;
 
   /// Долгота
-  final double lng;
+  final double? lng;
 
   /// Ссылка на карту
   final String mapLink;
 
-  const Location({
-    required this.lat,
-    required this.lng,
-    required this.mapLink,
-  });
+  /// Адрес (опционально, можно парсить из mapLink)
+  final String? address;
+
+  const Location({this.lat, this.lng, required this.mapLink, this.address});
 }
 
-/// Диапазон дат
+/// Диапазон дат (максимум неделя для обычных пользователей, месяц для премиум)
 class DateRange {
   /// Начало
   final DateTime start;
@@ -118,10 +117,7 @@ class DateRange {
   /// Конец
   final DateTime end;
 
-  const DateRange({
-    required this.start,
-    required this.end,
-  });
+  const DateRange({required this.start, required this.end});
 }
 
 /// Статистика слота
@@ -135,11 +131,7 @@ class SlotStats {
   /// Список голосующих (ID)
   final List<String> voters;
 
-  const SlotStats({
-    required this.slotId,
-    required this.votes,
-    required this.voters,
-  });
+  const SlotStats({required this.slotId, required this.votes, required this.voters});
 }
 
 /// Сводка расходов
@@ -150,10 +142,7 @@ class ExpenseSummary {
   /// Количество чеков
   final int receiptCount;
 
-  const ExpenseSummary({
-    required this.totalAmount,
-    required this.receiptCount,
-  });
+  const ExpenseSummary({required this.totalAmount, required this.receiptCount});
 }
 
 /// Тип мероприятия

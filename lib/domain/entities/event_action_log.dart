@@ -18,14 +18,7 @@ class EventActionLog {
   /// Время действия
   final DateTime timestamp;
 
-  const EventActionLog({
-    required this.actorId,
-    this.eventId,
-    this.targetUserId,
-    required this.actionType,
-    required this.payload,
-    required this.timestamp,
-  });
+  const EventActionLog({required this.actorId, this.eventId, this.targetUserId, required this.actionType, required this.payload, required this.timestamp});
 }
 
 /// Тип действия
@@ -38,6 +31,9 @@ enum EventActionType {
 
   /// Удаление мероприятия
   deleteEvent,
+
+  /// Архивирование мероприятия
+  archiveEvent,
 
   /// Назначение менеджера
   assignManager,
@@ -57,6 +53,12 @@ enum EventActionType {
   /// Разблокировка пользователя
   unblockUser,
 
-  /// Изменение рейтинга
-  changeRating,
+  /// Изменение рейтинга пользователя
+  changeRatingUser,
+
+  /// Лайк
+  likeEvent,
+
+  /// Дизлайк
+  dislikeEvent,
 }

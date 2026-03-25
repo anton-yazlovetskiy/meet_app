@@ -106,4 +106,150 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit => 'Edit';
+
+  @override
+  String get loginWith => 'Sign in with';
+
+  @override
+  String get rulesTitle => 'Service Rules';
+
+  @override
+  String get rules1 => '• Spam and fraud prohibition';
+
+  @override
+  String get rules2 => '• Insults and discrimination prohibition';
+
+  @override
+  String get rules3 => '• Illegal actions prohibition';
+
+  @override
+  String get rules4 => '• Disclaimer for user actions';
+
+  @override
+  String get licenseButton => 'License Agreement';
+
+  @override
+  String get licenseText =>
+      'By registering, you confirm that you have read and agree to all terms of the license agreement.';
+
+  @override
+  String get tariffsTitle => 'Tariffs';
+
+  @override
+  String get tariffPhysicalTitle => 'Individuals';
+
+  @override
+  String get tariffPhysicalDesc => 'Basic access';
+
+  @override
+  String get tariffPhysicalPrice => '0 ₽';
+
+  @override
+  String get tariffPhysicalFeature1 => 'View events';
+
+  @override
+  String get tariffPhysicalFeature2 => 'Participate in voting';
+
+  @override
+  String get searchEventsInYourCity => 'Search for events in your city';
+
+  @override
+  String get tagsLabel => 'Tags';
+
+  @override
+  String get myEventsFilter => 'Created by me';
+
+  @override
+  String get participatingFilter => 'Participating';
+
+  @override
+  String get appliedFilter => 'Applied';
+
+  @override
+  String get archivedFilter => 'Archived';
+
+  @override
+  String get applicationCancelled => 'You cancelled your application for';
+
+  @override
+  String get applicationSubmitted => 'You applied for';
+
+  @override
+  String get errorMessage => 'Error';
+
+  @override
+  String get invalidMapUrl => 'Invalid map URL';
+
+  @override
+  String get failedOpenMap => 'Failed to open map';
+
+  @override
+  String get tariffBusiness1Title => 'Business L1';
+
+  @override
+  String get tariffBusiness1Desc => 'Advanced tools';
+
+  @override
+  String get tariffBusiness1Price => '1490 ₽';
+
+  @override
+  String get tariffBusiness1Feature1 => 'Create events';
+
+  @override
+  String get tariffBusiness1Feature2 => 'Manage participants';
+
+  @override
+  String get tariffBusiness1Feature3 => 'Statistics';
+
+  @override
+  String get tariffBusiness2Title => 'Business L2';
+
+  @override
+  String get tariffBusiness2Desc => 'Priority support';
+
+  @override
+  String get tariffBusiness2Price => '2990 ₽';
+
+  @override
+  String get tariffBusiness2Feature1 => 'All from L1';
+
+  @override
+  String get tariffBusiness2Feature2 => 'Priority support';
+
+  @override
+  String get tariffBusiness2Feature3 => 'API access';
+
+  @override
+  String get tariffBusiness3Title => 'Business L3';
+
+  @override
+  String get tariffBusiness3Desc => 'Maximum capabilities';
+
+  @override
+  String get tariffBusiness3Price => '4990 ₽';
+
+  @override
+  String get tariffBusiness3Feature1 => 'All from L2';
+
+  @override
+  String get tariffBusiness3Feature2 => 'Auto moderation';
+
+  @override
+  String get tariffBusiness3Feature3 => 'Customization';
+
+  @override
+  String get locationParsingError_invalidUrl =>
+      'The provided link is not a valid URL.';
+
+  @override
+  String get locationParsingError_unsupportedMapProvider =>
+      'Only Google Maps and Yandex Maps links are supported.';
+
+  @override
+  String get locationParsingError_parsingFailed =>
+      'Could not extract coordinates from the link. Please check the link or enter the address manually.';
+
+  @override
+  String get locationParsingError_networkError =>
+      'Network error. Could not resolve the short link. Please check your internet connection.';
 }

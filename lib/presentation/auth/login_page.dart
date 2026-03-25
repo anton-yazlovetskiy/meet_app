@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:meet_app/l10n/app_localizations.dart';
 import '../../domain/usecases/auth/sign_in_usecases.dart';
-import '../../domain/usecases/usecase.dart';
-import '../../domain/repositories/auth_repository.dart';
+import '../core/widgets/app_header.dart';
+import '../core/widgets/auth_button_group.dart';
+import '../core/widgets/tariff_card.dart';
 
 class LoginPage extends StatefulWidget {
   final Locale currentLocale;
@@ -18,7 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   final _signInWithGoogle = GetIt.instance<SignInWithGoogleUseCase>();
   final _signInWithApple = GetIt.instance<SignInWithAppleUseCase>();
   final _signInWithTwitter = GetIt.instance<SignInWithTwitterUseCase>();
-  final _authRepository = GetIt.instance<AuthRepository>();
 
   bool _isLoading = false;
   String? _error;
@@ -27,13 +28,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true);
     try {
       await action();
-      final user = await _authRepository.getCurrentUser();
-      if (user == null) throw Exception('Ошибка загрузки пользователя');
-      if (!user.acceptedLicense && !(await _authRepository.hasAcceptedLicense(user.id))) {
-        Navigator.of(context).pushReplacementNamed('/license');
-      } else {
-        Navigator.of(context).pushReplacementNamed('/feed');
-      }
+      Navigator.of(context).pushReplacementNamed('/feed');
     } catch (e) {
       setState(() => _error = 'Не удалось войти: $e');
     } finally {
@@ -43,78 +38,110 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gradient = isDark
+        ? const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black, Colors.indigo, Colors.black], stops: [0.1, 0.9, 1.0])
+        : const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.lightBlueAccent, Colors.lightBlue, Colors.lightBlueAccent], stops: [0.0, 0.5, 1.0]);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Войти в MeetApp')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+      body: Container(
+        decoration: BoxDecoration(gradient: gradient),
+        child: SafeArea(
+          child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 16),
-                const Text('Войти через', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _AuthIconButton(icon: Icons.g_mobiledata, label: 'Google', onTap: _isLoading ? null : () => _onLogin(() => _signInWithGoogle(NoParams()))),
-                    _AuthIconButton(icon: Icons.apple, label: 'Apple', onTap: _isLoading ? null : () => _onLogin(() => _signInWithApple(NoParams()))),
-                    _AuthIconButton(icon: Icons.alternate_email, label: 'Twitter', onTap: _isLoading ? null : () => _onLogin(() => _signInWithTwitter(NoParams()))),
-                  ],
+                AppHeader(currentLocale: widget.currentLocale, onLocaleChanged: widget.onLocaleChanged),
+                const SizedBox(height: 20),
+                AuthButtonGroup(
+                  isLoading: _isLoading,
+                  onGoogle: () => _onLogin(() => _signInWithGoogle(widget.currentLocale)),
+                  onApple: () => _onLogin(() => _signInWithApple(widget.currentLocale)),
+                  onTwitter: () => _onLogin(() => _signInWithTwitter(widget.currentLocale)),
+                  label: l10n.loginWith,
                 ),
-                const SizedBox(height: 16),
-                if (_error != null) ...[Text(_error!, style: const TextStyle(color: Colors.red)), const SizedBox(height: 12)],
-                Card(
-                  color: Colors.grey.shade50,
+                const SizedBox(height: 20),
+                if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      _error!,
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.rulesTitle, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Text(l10n.rules1, style: const TextStyle(fontSize: 12)),
+                      Text(l10n.rules2, style: const TextStyle(fontSize: 12)),
+                      Text(l10n.rules3, style: const TextStyle(fontSize: 12)),
+                      Text(l10n.rules4, style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text('Правила сервиса', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 8),
-                        Text('• Запрет спама и мошенничества'),
-                        Text('• Запрет оскорблений и дискриминации'),
-                        Text('• Запрет противоправных действий'),
-                        Text('• Отказ от ответственности за действия пользователей'),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SizedBox(
+                      width: (MediaQuery.of(context).size.width / 3).clamp(150.0, double.infinity),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                        onPressed: () => _showLicenseDialog(context),
+                        child: Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Text(l10n.licenseButton)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(l10n.licenseText, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+                ),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(l10n.tariffsTitle, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          child: TariffCard(title: 'Физ. лица', description: 'Базовый доступ', price: '0 ₽', features: ['Просмотр мероприятий', 'Участие в голосованиях'], isPhysical: true),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 120,
+                          child: TariffCard(title: 'Юр.Лица L1', description: 'Расширенные инструменты', price: '1490 ₽', features: ['Создание мероприятий', 'Управление участн.', 'Статистика']),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 120,
+                          child: TariffCard(title: 'Юр.Лица L2', description: 'Приоритетная поддержка', price: '2990 ₽', features: ['Всё из L1', 'Приоритетн. поддержка', 'API доступ']),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 120,
+                          child: TariffCard(title: 'Юр.Лица L3', description: 'Максимальные возможности', price: '4990 ₽', features: ['Всё из L2', 'Автомодерация', 'Кастомизация']),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Text('Язык: '),
-                    TextButton(
-                      onPressed: () => widget.onLocaleChanged(const Locale('ru')),
-                      child: Text('Русский', style: TextStyle(color: widget.currentLocale.languageCode == 'ru' ? Colors.blue : null)),
-                    ),
-                    TextButton(
-                      onPressed: () => widget.onLocaleChanged(const Locale('en')),
-                      child: Text('English', style: TextStyle(color: widget.currentLocale.languageCode == 'en' ? Colors.blue : null)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(onPressed: () => _showLicenseDialog(context), child: const Text('Лицензионное соглашение')),
-                const SizedBox(height: 4),
-                const Text('Регистрируясь, вы подтверждаете, что ознакомились и согласны со всеми пунктами лицензионного соглашения.'),
-                const SizedBox(height: 16),
-                const Text('Тарифы', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    _TariffCard(title: 'Физ. лица', description: 'Базовый доступ', price: '0 ₽'),
-                    _TariffCard(title: 'Юр. лица L1', description: 'Расширенные инструменты', price: '1490 ₽'),
-                    _TariffCard(title: 'Юр. лица L2', description: 'Приоритетная поддержка', price: '2990 ₽'),
-                    _TariffCard(title: 'Юр. лица L3', description: 'Автоматическая модерация', price: '4990 ₽'),
-                  ],
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 if (_isLoading) const Center(child: CircularProgressIndicator()),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -143,55 +170,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Закрыть'))],
-      ),
-    );
-  }
-}
-
-class _AuthIconButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onTap;
-
-  const _AuthIconButton({required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        IconButton(onPressed: onTap, icon: Icon(icon, size: 36)),
-        Text(label),
-      ],
-    );
-  }
-}
-
-class _TariffCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final String price;
-
-  const _TariffCard({required this.title, required this.description, required this.price});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width / 2 - 28,
-      child: Card(
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
-              Text(description, style: const TextStyle(color: Colors.grey)),
-              const SizedBox(height: 12),
-              Text(price, style: const TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
       ),
     );
   }

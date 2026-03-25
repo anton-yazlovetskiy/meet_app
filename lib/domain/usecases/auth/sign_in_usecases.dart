@@ -1,39 +1,40 @@
+import 'dart:ui';
 import '../../repositories/index.dart';
 import '../usecase.dart';
 
 /// Usecase для входа через Google
-class SignInWithGoogleUseCase extends UseCase<void, NoParams> {
+class SignInWithGoogleUseCase extends UseCase<void, Locale> {
   final AuthRepository authRepository;
 
   SignInWithGoogleUseCase(this.authRepository);
 
   @override
-  Future<void> call(NoParams params) async {
-    await authRepository.signInWithGoogle();
+  Future<void> call(Locale locale) async {
+    await authRepository.signInWithGoogle(locale);
   }
 }
 
 /// Usecase для входа через Apple
-class SignInWithAppleUseCase extends UseCase<void, NoParams> {
+class SignInWithAppleUseCase extends UseCase<void, Locale> {
   final AuthRepository authRepository;
 
   SignInWithAppleUseCase(this.authRepository);
 
   @override
-  Future<void> call(NoParams params) async {
-    await authRepository.signInWithApple();
+  Future<void> call(Locale locale) async {
+    await authRepository.signInWithApple(locale);
   }
 }
 
 /// Usecase для входа через Twitter
-class SignInWithTwitterUseCase extends UseCase<void, NoParams> {
+class SignInWithTwitterUseCase extends UseCase<void, Locale> {
   final AuthRepository authRepository;
 
   SignInWithTwitterUseCase(this.authRepository);
 
   @override
-  Future<void> call(NoParams params) async {
-    await authRepository.signInWithTwitter();
+  Future<void> call(Locale locale) async {
+    await authRepository.signInWithTwitter(locale);
   }
 }
 

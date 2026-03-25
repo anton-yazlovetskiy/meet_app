@@ -38,7 +38,8 @@ class _MeetAppState extends State<MeetApp> {
           valueListenable: _localeNotifier,
           builder: (context, locale, child) {
             return MaterialApp(
-              title: 'MeetApp',
+              debugShowCheckedModeBanner: false,
+              title: 'King of Time',
               locale: locale,
               supportedLocales: AppLocalizations.supportedLocales,
               localizationsDelegates: [AppLocalizations.delegate, GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
@@ -48,12 +49,14 @@ class _MeetAppState extends State<MeetApp> {
               initialRoute: '/',
               routes: {
                 '/': (context) => const AuthGate(),
-                '/login': (context) => LoginPage(
+                '/login': (context) => LoginPage(currentLocale: locale, onLocaleChanged: (value) => _localeNotifier.value = value),
+                '/license': (context) => const auth_license.LicensePage(),
+                '/feed': (context) => EventListPage(
+                  onOpenSettings: () => Navigator.of(context).pushNamed('/settings'),
                   currentLocale: locale,
                   onLocaleChanged: (value) => _localeNotifier.value = value,
+                  onToggleTheme: () => _themeModeNotifier.value = _themeModeNotifier.value == ThemeMode.light ? ThemeMode.dark : ThemeMode.light,
                 ),
-                '/license': (context) => const auth_license.LicensePage(),
-                '/feed': (context) => EventListPage(onOpenSettings: () => Navigator.of(context).pushNamed('/settings')),
                 '/create': (context) => const EventCreatePage(),
                 '/settings': (context) => SettingsPage(
                   currentLocale: locale,

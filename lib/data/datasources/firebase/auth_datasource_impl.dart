@@ -1,3 +1,4 @@
+import 'dart:ui';
 import '../../../domain/index.dart';
 import '../../../data/models/index.dart';
 import 'auth_datasource.dart';
@@ -6,11 +7,38 @@ import 'auth_datasource.dart';
 class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
   UserModel? _currentUser;
 
+  String _getDefaultCity(Locale locale) {
+    switch (locale.languageCode) {
+      case 'ru':
+        return 'Москва';
+      case 'en':
+        return 'London';
+      case 'fr':
+        return 'Paris';
+      case 'de':
+        return 'Berlin';
+      case 'es':
+        return 'Madrid';
+      case 'it':
+        return 'Rome';
+      case 'pt':
+        return 'Lisbon';
+      case 'zh':
+        return 'Beijing';
+      case 'ja':
+        return 'Tokyo';
+      case 'ko':
+        return 'Seoul';
+      default:
+        return 'London'; // default to London for en
+    }
+  }
+
   @override
   Future<UserModel?> getCurrentUser() async => _currentUser;
 
   @override
-  Future<UserModel> signInWithGoogle() async {
+  Future<UserModel> signInWithGoogle(Locale locale) async {
     _currentUser = UserModel(
       id: 'user_1',
       name: 'Test User (Google)',
@@ -20,12 +48,13 @@ class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
       role: UserRole.user,
       premiumStatus: PremiumStatus.free,
       acceptedLicense: false,
+      city: _getDefaultCity(locale),
     );
     return _currentUser!;
   }
 
   @override
-  Future<UserModel> signInWithApple() async {
+  Future<UserModel> signInWithApple(Locale locale) async {
     _currentUser = UserModel(
       id: 'user_2',
       name: 'Test User (Apple)',
@@ -35,12 +64,13 @@ class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
       role: UserRole.user,
       premiumStatus: PremiumStatus.physicalPremium,
       acceptedLicense: false,
+      city: _getDefaultCity(locale),
     );
     return _currentUser!;
   }
 
   @override
-  Future<UserModel> signInWithTwitter() async {
+  Future<UserModel> signInWithTwitter(Locale locale) async {
     _currentUser = UserModel(
       id: 'user_3',
       name: 'Test User (Twitter)',
@@ -50,6 +80,7 @@ class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
       role: UserRole.user,
       premiumStatus: PremiumStatus.businessLevel2,
       acceptedLicense: false,
+      city: _getDefaultCity(locale),
     );
     return _currentUser!;
   }

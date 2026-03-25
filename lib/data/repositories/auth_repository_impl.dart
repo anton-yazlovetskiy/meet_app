@@ -1,3 +1,4 @@
+import 'dart:ui';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entities/index.dart';
 import '../../domain/exceptions/domain_exceptions.dart';
@@ -8,10 +9,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuthDataSource firebaseAuthDataSource;
   final LocalAuthDataSource localAuthDataSource;
 
-  AuthRepositoryImpl({
-    required this.firebaseAuthDataSource,
-    required this.localAuthDataSource,
-  });
+  AuthRepositoryImpl({required this.firebaseAuthDataSource, required this.localAuthDataSource});
 
   @override
   Future<User?> getCurrentUser() async {
@@ -23,9 +21,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User> signInWithGoogle() async {
+  Future<User> signInWithGoogle(Locale locale) async {
     try {
-      final user = await firebaseAuthDataSource.signInWithGoogle();
+      final user = await firebaseAuthDataSource.signInWithGoogle(locale);
       await localAuthDataSource.saveCurrentUser(user);
       return user;
     } catch (e) {
@@ -34,9 +32,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User> signInWithApple() async {
+  Future<User> signInWithApple(Locale locale) async {
     try {
-      final user = await firebaseAuthDataSource.signInWithApple();
+      final user = await firebaseAuthDataSource.signInWithApple(locale);
       await localAuthDataSource.saveCurrentUser(user);
       return user;
     } catch (e) {
@@ -45,9 +43,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User> signInWithTwitter() async {
+  Future<User> signInWithTwitter(Locale locale) async {
     try {
-      final user = await firebaseAuthDataSource.signInWithTwitter();
+      final user = await firebaseAuthDataSource.signInWithTwitter(locale);
       await localAuthDataSource.saveCurrentUser(user);
       return user;
     } catch (e) {
