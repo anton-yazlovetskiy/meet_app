@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:meet_app/core/utils/location_parser.dart';
-import 'package:meet_app/domain/entities/location_data.dart';
+import 'package:meet_app/domain/entities/event.dart';
 import 'package:meet_app/domain/exceptions/location_parsing_exception.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -26,35 +26,38 @@ void main() {
 
   group('LocationParser', () {
     const double lat = 55.7558;
-    const double lon = 37.6177;
+    const double lng = 37.6177;
 
-    test('parses a standard Google Maps URL successfully', () async {
+    test('успешно парсит стандартный URL Google Maps', () async {
       const url =
-          'https://www.google.com/maps/place/Kremlin/@$lat,$lon,15z/data=!4m2!3m1!1s0x0:0x3d5c8a5a5a5a5a5a';
+          'https://www.google.com/maps/place/Kremlin/@$lat,$lng,15z/data=!4m2!3m1!1s0x0:0x3d5c8a5a5a5a5a5a';
       final result = await locationParser.parse(url);
-      expect(result.latitude, lat);
-      expect(result.longitude, lon);
+      expect(result.lat, lat);
+      expect(result.lng, lng);
       expect(result.address, 'Kremlin');
+      expect(result.mapLink, url);
     });
 
-    test('parses a standard Yandex Maps URL successfully', () async {
-      const url = 'https://yandex.ru/maps/?ll=$lon%2C$lat&z=14';
+    test('успешно парсит стандартный URL Yandex Maps', () async {
+      const url = 'https://yandex.ru/maps/?ll=$lng%2C$lat&z=14';
       final result = await locationParser.parse(url);
-      expect(result.latitude, lat);
-      expect(result.longitude, lon);
+      expect(result.lat, lat);
+      expect(result.lng, lng);
+      expect(result.mapLink, url);
     });
     
-    test('parses a Yandex Maps URL with text successfully', () async {
-      const url = 'https://yandex.ru/maps/213/moscow/?ll=$lon%2C$lat&text=Red%20Square';
+    test('успешно парсит URL Yandex Maps с параметром text', () async {
+      const url = 'https://yandex.ru/maps/213/moscow/?ll=$lng%2C$lat&text=Red%20Square';
       final result = await locationParser.parse(url);
-      expect(result.latitude, lat);
-      expect(result.longitude, lon);
+      expect(result.lat, lat);
+      expect(result.lng, lng);
       expect(result.address, 'Red Square');
+      expect(result.mapLink, url);
     });
 
-    test('resolves and parses a short Google Maps URL', () async {
+    test('раскрывает и парсит короткую ссылку Google Maps', () async {
       const shortUrl = 'https://maps.app.goo.gl/shortId';
-      const longUrl = 'https://www.google.com/maps/place/Kremlin/@$lat,$lon,15z';
+      const longUrl = 'https://www.google.com/maps/place/Kremlin/@$lat,$lng,15z';
 
       final mockResponse = MockStreamedResponse();
       when(() => mockResponse.statusCode).thenReturn(302);
@@ -64,12 +67,13 @@ void main() {
 
       final result = await locationParser.parse(shortUrl);
 
-      expect(result.latitude, lat);
-      expect(result.longitude, lon);
+      expect(result.lat, lat);
+      expect(result.lng, lng);
       expect(result.address, 'Kremlin');
+      expect(result.mapLink, shortUrl);
     });
 
-    test('throws parsingFailed for a Google Maps URL without coordinates', () {
+    test('выбрасывает ошибку parsingFailed для URL Google Maps без координат', () {
       const url = 'https://www.google.com/maps/search/restaurants/';
       expect(
         () => locationParser.parse(url),
@@ -80,7 +84,7 @@ void main() {
       );
     });
 
-    test('throws invalidUrl for a malformed URL', () {
+    test('выбрасывает ошибку invalidUrl для некорректного URL', () {
       const url = 'not a valid url';
       expect(
         () => locationParser.parse(url),
@@ -91,7 +95,7 @@ void main() {
       );
     });
 
-    test('throws unsupportedMapProvider for a non-map URL', () {
+    test('выбрасывает ошибку unsupportedMapProvider для URL, не являющегося картой', () {
       const url = 'https://example.com';
       expect(
         () => locationParser.parse(url),
@@ -102,7 +106,7 @@ void main() {
       );
     });
 
-    test('throws networkError when resolving short link fails', () {
+    test('выбрасывает ошибку networkError при ошибке раскрытия короткой ссылки', () {
        const shortUrl = 'https://maps.app.goo.gl/shortId';
        when(() => mockHttpClient.send(any())).thenThrow(Exception('Network failed'));
 

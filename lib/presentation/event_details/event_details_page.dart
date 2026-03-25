@@ -169,7 +169,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Координаты: ${_event.location.lat.toStringAsFixed(4)}, ${_event.location.lng.toStringAsFixed(4)}'),
                 const SizedBox(height: 8),
                 TextButton.icon(onPressed: () {}, icon: const Icon(Icons.map), label: const Text('Открыть на карте')),
               ],

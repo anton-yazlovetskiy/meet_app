@@ -71,9 +71,13 @@ Future<void> setupDependencyInjection() async {
   getIt.registerSingleton<AcceptLicenseUseCase>(AcceptLicenseUseCase(getIt<AuthRepository>()));
 
   /// Usecases - Event
-  getIt.registerSingleton<CreateEventUseCase>(CreateEventUseCase(eventRepository: getIt<EventRepository>(), userRepository: getIt<UserRepository>()));
+  getIt.registerSingleton<CreateEventUseCase>(CreateEventUseCase(eventRepository: getIt<EventRepository>(), userRepository: getIt<UserRepository>(), logger: getIt<Logger>()));
 
-  getIt.registerSingleton<SelectFinalSlotUseCase>(SelectFinalSlotUseCase(getIt<EventRepository>()));
+  getIt.registerSingleton<SelectFinalSlotUseCase>(SelectFinalSlotUseCase(eventRepository: getIt<EventRepository>(), logger: getIt<Logger>()));
+
+  getIt.registerSingleton<GetEventByIdUseCase>(GetEventByIdUseCase(eventRepository: getIt<EventRepository>(), logger: getIt<Logger>()));
+
+  getIt.registerSingleton<ListEventsUseCase>(ListEventsUseCase(eventRepository: getIt<EventRepository>(), logger: getIt<Logger>()));
 
   /// Usecases - Application
   getIt.registerSingleton<CreateApplicationUseCase>(CreateApplicationUseCase(applicationRepository: getIt<ApplicationRepository>(), eventRepository: getIt<EventRepository>()));
