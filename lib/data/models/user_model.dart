@@ -34,6 +34,8 @@ class UserModel extends User {
   final bool acceptedLicense;
   @override
   final String? city;
+  @override
+  final Tariff tariff;
 
   UserModel({
     required this.id,
@@ -50,6 +52,7 @@ class UserModel extends User {
     required this.premiumStatus,
     required this.acceptedLicense,
     this.city,
+    required this.tariff,
   }) : super(
          id: id,
          name: name,
@@ -65,6 +68,7 @@ class UserModel extends User {
          premiumStatus: premiumStatus,
          acceptedLicense: acceptedLicense,
          city: city,
+         tariff: tariff,
        );
 
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
@@ -87,6 +91,7 @@ class UserModel extends User {
       premiumStatus: user.premiumStatus,
       acceptedLicense: user.acceptedLicense,
       city: user.city,
+      tariff: user.tariff,
     );
   }
 }

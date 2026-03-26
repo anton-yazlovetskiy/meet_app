@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:get_it/get_it.dart';
-import 'package:meet_app/l10n/app_localizations.dart';
+import 'dart:ui';
+import '../../../core/di/service_locator.dart';
+import '../../../core/router/app_router.dart';
 import '../../domain/usecases/auth/sign_in_usecases.dart';
 import '../core/widgets/app_header.dart';
 import '../core/widgets/auth_button_group.dart';
 import '../core/widgets/tariff_card.dart';
+import 'package:meet_app/l10n/app_localizations.dart';
 
+@RoutePage()
 class LoginPage extends StatefulWidget {
-  final Locale currentLocale;
-  final void Function(Locale locale) onLocaleChanged;
+  final Locale? currentLocale;
+  final void Function(Locale locale)? onLocaleChanged;
 
-  const LoginPage({super.key, required this.currentLocale, required this.onLocaleChanged});
+  const LoginPage({super.key, this.currentLocale, this.onLocaleChanged});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -23,26 +28,49 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isLoading = false;
   String? _error;
+  final router = getIt<AppRouter>();
 
   Future<void> _onLogin(Future<void> Function() action) async {
     setState(() => _isLoading = true);
     try {
       await action();
-      Navigator.of(context).pushReplacementNamed('/feed');
+      if (!mounted) return;
+      router.replace(const EventListRoute());
     } catch (e) {
-      setState(() => _error = 'Не удалось войти: $e');
+      if (mounted) {
+        setState(() => _error = 'Не удалось войти: $e');
+      }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final resolvedLocale =
+        widget.currentLocale ??
+        Locale(PlatformDispatcher.instance.locale.languageCode);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final gradient = isDark
-        ? const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.black, Colors.indigo, Colors.black], stops: [0.1, 0.9, 1.0])
-        : const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.lightBlueAccent, Colors.lightBlue, Colors.lightBlueAccent], stops: [0.0, 0.5, 1.0]);
+        ? const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.black, Colors.indigo, Colors.black],
+            stops: [0.1, 0.9, 1.0],
+          )
+        : const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.lightBlueAccent,
+              Colors.lightBlue,
+              Colors.lightBlueAccent,
+            ],
+            stops: [0.0, 0.5, 1.0],
+          );
 
     return Scaffold(
       body: Container(
@@ -51,13 +79,19 @@ class _LoginPageState extends State<LoginPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                AppHeader(currentLocale: widget.currentLocale, onLocaleChanged: widget.onLocaleChanged),
+                AppHeader(
+                  currentLocale: resolvedLocale,
+                  onLocaleChanged: widget.onLocaleChanged ?? (_) {},
+                ),
                 const SizedBox(height: 20),
                 AuthButtonGroup(
                   isLoading: _isLoading,
-                  onGoogle: () => _onLogin(() => _signInWithGoogle(widget.currentLocale)),
-                  onApple: () => _onLogin(() => _signInWithApple(widget.currentLocale)),
-                  onTwitter: () => _onLogin(() => _signInWithTwitter(widget.currentLocale)),
+                  onGoogle: () =>
+                      _onLogin(() => _signInWithGoogle(resolvedLocale)),
+                  onApple: () =>
+                      _onLogin(() => _signInWithApple(resolvedLocale)),
+                  onTwitter: () =>
+                      _onLogin(() => _signInWithTwitter(resolvedLocale)),
                   label: l10n.loginWith,
                 ),
                 const SizedBox(height: 20),
@@ -76,7 +110,13 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.rulesTitle, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                      Text(
+                        l10n.rulesTitle,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Text(l10n.rules1, style: const TextStyle(fontSize: 12)),
                       Text(l10n.rules2, style: const TextStyle(fontSize: 12)),
@@ -90,11 +130,21 @@ class _LoginPageState extends State<LoginPage> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(
-                      width: (MediaQuery.of(context).size.width / 3).clamp(150.0, double.infinity),
+                      width: (MediaQuery.of(context).size.width / 3).clamp(
+                        150.0,
+                        double.infinity,
+                      ),
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                         onPressed: () => _showLicenseDialog(context),
-                        child: Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Text(l10n.licenseButton)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Text(l10n.licenseButton),
+                        ),
                       ),
                     ),
                   ),
@@ -102,12 +152,21 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(l10n.licenseText, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+                  child: Text(
+                    l10n.licenseText,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(l10n.tariffsTitle, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  child: Text(
+                    l10n.tariffsTitle,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Padding(
@@ -116,31 +175,68 @@ class _LoginPageState extends State<LoginPage> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 120,
-                          child: TariffCard(title: 'Физ. лица', description: 'Базовый доступ', price: '0 ₽', features: ['Просмотр мероприятий', 'Участие в голосованиях'], isPhysical: true),
+                          child: TariffCard(
+                            title: 'Физ. лица',
+                            description: 'Базовый доступ',
+                            price: '0 ₽',
+                            features: [
+                              'Просмотр мероприятий',
+                              'Участие в голосованиях',
+                            ],
+                            isPhysical: true,
+                          ),
                         ),
                         const SizedBox(width: 8),
-                        SizedBox(
+                        const SizedBox(
                           width: 120,
-                          child: TariffCard(title: 'Юр.Лица L1', description: 'Расширенные инструменты', price: '1490 ₽', features: ['Создание мероприятий', 'Управление участн.', 'Статистика']),
+                          child: TariffCard(
+                            title: 'Юр.Лица L1',
+                            description: 'Расширенные инструменты',
+                            price: '1490 ₽',
+                            features: [
+                              'Создание мероприятий',
+                              'Управление участн.',
+                              'Статистика',
+                            ],
+                          ),
                         ),
                         const SizedBox(width: 8),
-                        SizedBox(
+                        const SizedBox(
                           width: 120,
-                          child: TariffCard(title: 'Юр.Лица L2', description: 'Приоритетная поддержка', price: '2990 ₽', features: ['Всё из L1', 'Приоритетн. поддержка', 'API доступ']),
+                          child: TariffCard(
+                            title: 'Юр.Лица L2',
+                            description: 'Приоритетная поддержка',
+                            price: '2990 ₽',
+                            features: [
+                              'Всё из L1',
+                              'Приоритетн. поддержка',
+                              'API доступ',
+                            ],
+                          ),
                         ),
                         const SizedBox(width: 8),
-                        SizedBox(
+                        const SizedBox(
                           width: 120,
-                          child: TariffCard(title: 'Юр.Лица L3', description: 'Максимальные возможности', price: '4990 ₽', features: ['Всё из L2', 'Автомодерация', 'Кастомизация']),
+                          child: TariffCard(
+                            title: 'Юр.Лица L3',
+                            description: 'Максимальные возможности',
+                            price: '4990 ₽',
+                            features: [
+                              'Всё из L2',
+                              'Автомодерация',
+                              'Кастомизация',
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                if (_isLoading) const Center(child: CircularProgressIndicator()),
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator()),
                 const SizedBox(height: 20),
               ],
             ),
@@ -169,7 +265,12 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Закрыть'))],
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).maybePop(),
+            child: const Text('Закрыть'),
+          ),
+        ],
       ),
     );
   }

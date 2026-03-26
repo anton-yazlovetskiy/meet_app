@@ -5,95 +5,208 @@ import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/index.dart';
 import '../../data/index.dart';
+import '../config/app_config.dart';
+
+import '../router/app_router.dart';
 
 final getIt = GetIt.instance;
 
 /// Инициализация Dependency Injection
-Future<void> setupDependencyInjection() async {
+Future<void> setupDependencyInjection({AppConfig? appConfig}) async {
+  final resolvedConfig = appConfig ?? AppConfig.fromEnvironment();
+  getIt.registerSingleton<AppConfig>(resolvedConfig);
+
   final prefs = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(prefs);
 
+  // AppRouter
+  getIt.registerSingleton<AppRouter>(AppRouter());
+
   // Logger
-  getIt.registerSingleton<Logger>(Logger(printer: PrettyPrinter(methodCount: 2, errorMethodCount: 8, lineLength: 120, colors: true, printEmojis: true, printTime: true)));
+  getIt.registerSingleton<Logger>(
+    Logger(
+      printer: PrettyPrinter(
+        methodCount: 2,
+        errorMethodCount: 8,
+        lineLength: 120,
+        colors: true,
+        printEmojis: true,
+        printTime: true,
+      ),
+    ),
+  );
 
   /// Datasources - Mock implementations for development
   getIt.registerSingleton<LocalMockDataSource>(LocalMockDataSource());
 
   /// Auth Datasources
-  getIt.registerSingleton<FirebaseAuthDataSource>(MockFirebaseAuthDataSourceImpl());
-  getIt.registerSingleton<LocalAuthDataSource>(MockLocalAuthDataSourceImpl());
+  getIt.registerSingleton<FirebaseAuthDataSource>(
+    MockFirebaseAuthDataSourceImpl(),
+  );
+  getIt.registerSingleton<LocalAuthDataSource>(
+    MockLocalAuthDataSourceImpl(prefs),
+  );
 
   /// Event Datasources
-  getIt.registerSingleton<EventRemoteDataSource>(MockEventRemoteDataSourceImpl());
+  getIt.registerSingleton<EventRemoteDataSource>(
+    MockEventRemoteDataSourceImpl(),
+  );
   getIt.registerSingleton<EventLocalDataSource>(MockEventLocalDataSourceImpl());
 
   /// Application Datasources
-  getIt.registerSingleton<ApplicationRemoteDataSource>(MockApplicationRemoteDataSourceImpl());
+  getIt.registerSingleton<ApplicationRemoteDataSource>(
+    MockApplicationRemoteDataSourceImpl(),
+  );
 
   /// Chat Datasources
   getIt.registerSingleton<ChatRemoteDataSource>(MockChatRemoteDataSourceImpl());
   getIt.registerSingleton<ChatLocalDataSource>(MockChatLocalDataSourceImpl());
 
   /// Expense Datasources
-  getIt.registerSingleton<ExpenseRemoteDataSource>(MockExpenseRemoteDataSourceImpl());
+  getIt.registerSingleton<ExpenseRemoteDataSource>(
+    MockExpenseRemoteDataSourceImpl(),
+  );
 
   /// Notification Datasources
-  getIt.registerSingleton<NotificationRemoteDataSource>(MockNotificationRemoteDataSourceImpl());
-  getIt.registerSingleton<NotificationLocalDataSource>(MockNotificationLocalDataSourceImpl());
+  getIt.registerSingleton<NotificationRemoteDataSource>(
+    MockNotificationRemoteDataSourceImpl(),
+  );
+  getIt.registerSingleton<NotificationLocalDataSource>(
+    MockNotificationLocalDataSourceImpl(),
+  );
 
   /// User Datasources
   getIt.registerSingleton<UserRemoteDataSource>(MockUserRemoteDataSourceImpl());
 
   /// Repositories
-  getIt.registerSingleton<AuthRepository>(AuthRepositoryImpl(firebaseAuthDataSource: getIt<FirebaseAuthDataSource>(), localAuthDataSource: getIt<LocalAuthDataSource>()));
+  getIt.registerSingleton<AuthRepository>(
+    AuthRepositoryImpl(
+      firebaseAuthDataSource: getIt<FirebaseAuthDataSource>(),
+      localAuthDataSource: getIt<LocalAuthDataSource>(),
+    ),
+  );
 
-  getIt.registerSingleton<EventRepository>(EventRepositoryImpl(remoteDataSource: getIt<EventRemoteDataSource>(), localDataSource: getIt<EventLocalDataSource>()));
+  getIt.registerSingleton<EventRepository>(
+    EventRepositoryImpl(
+      remoteDataSource: getIt<EventRemoteDataSource>(),
+      localDataSource: getIt<EventLocalDataSource>(),
+    ),
+  );
 
-  getIt.registerSingleton<ApplicationRepository>(ApplicationRepositoryImpl(remoteDataSource: getIt<ApplicationRemoteDataSource>()));
+  getIt.registerSingleton<ApplicationRepository>(
+    ApplicationRepositoryImpl(
+      remoteDataSource: getIt<ApplicationRemoteDataSource>(),
+    ),
+  );
 
-  getIt.registerSingleton<ChatRepository>(ChatRepositoryImpl(remoteDataSource: getIt<ChatRemoteDataSource>(), localDataSource: getIt<ChatLocalDataSource>()));
+  getIt.registerSingleton<ChatRepository>(
+    ChatRepositoryImpl(
+      remoteDataSource: getIt<ChatRemoteDataSource>(),
+      localDataSource: getIt<ChatLocalDataSource>(),
+    ),
+  );
 
-  getIt.registerSingleton<ExpenseRepository>(ExpenseRepositoryImpl(remoteDataSource: getIt<ExpenseRemoteDataSource>()));
+  getIt.registerSingleton<ExpenseRepository>(
+    ExpenseRepositoryImpl(remoteDataSource: getIt<ExpenseRemoteDataSource>()),
+  );
 
-  getIt.registerSingleton<NotificationRepository>(NotificationRepositoryImpl(remoteDataSource: getIt<NotificationRemoteDataSource>(), localDataSource: getIt<NotificationLocalDataSource>()));
+  getIt.registerSingleton<NotificationRepository>(
+    NotificationRepositoryImpl(
+      remoteDataSource: getIt<NotificationRemoteDataSource>(),
+      localDataSource: getIt<NotificationLocalDataSource>(),
+    ),
+  );
 
-  getIt.registerSingleton<UserRepository>(UserRepositoryImpl(remoteDataSource: getIt<UserRemoteDataSource>()));
+  getIt.registerSingleton<UserRepository>(
+    UserRepositoryImpl(remoteDataSource: getIt<UserRemoteDataSource>()),
+  );
 
   /// Usecases - Auth
-  getIt.registerSingleton<SignInWithGoogleUseCase>(SignInWithGoogleUseCase(getIt<AuthRepository>()));
+  getIt.registerSingleton<SignInWithGoogleUseCase>(
+    SignInWithGoogleUseCase(getIt<AuthRepository>()),
+  );
 
-  getIt.registerSingleton<SignInWithAppleUseCase>(SignInWithAppleUseCase(getIt<AuthRepository>()));
+  getIt.registerSingleton<SignInWithAppleUseCase>(
+    SignInWithAppleUseCase(getIt<AuthRepository>()),
+  );
 
-  getIt.registerSingleton<SignInWithTwitterUseCase>(SignInWithTwitterUseCase(getIt<AuthRepository>()));
+  getIt.registerSingleton<SignInWithTwitterUseCase>(
+    SignInWithTwitterUseCase(getIt<AuthRepository>()),
+  );
 
-  getIt.registerSingleton<SignOutUseCase>(SignOutUseCase(getIt<AuthRepository>()));
+  getIt.registerSingleton<SignOutUseCase>(
+    SignOutUseCase(getIt<AuthRepository>()),
+  );
 
-  getIt.registerSingleton<AcceptLicenseUseCase>(AcceptLicenseUseCase(getIt<AuthRepository>()));
+  getIt.registerSingleton<AcceptLicenseUseCase>(
+    AcceptLicenseUseCase(getIt<AuthRepository>()),
+  );
 
   /// Usecases - Event
-  getIt.registerSingleton<CreateEventUseCase>(CreateEventUseCase(eventRepository: getIt<EventRepository>(), userRepository: getIt<UserRepository>(), logger: getIt<Logger>()));
+  getIt.registerSingleton<CreateEventUseCase>(
+    CreateEventUseCase(
+      eventRepository: getIt<EventRepository>(),
+      userRepository: getIt<UserRepository>(),
+      logger: getIt<Logger>(),
+    ),
+  );
 
-  getIt.registerSingleton<SelectFinalSlotUseCase>(SelectFinalSlotUseCase(eventRepository: getIt<EventRepository>(), logger: getIt<Logger>()));
+  getIt.registerSingleton<SelectFinalSlotUseCase>(
+    SelectFinalSlotUseCase(
+      eventRepository: getIt<EventRepository>(),
+      logger: getIt<Logger>(),
+    ),
+  );
 
-  getIt.registerSingleton<GetEventByIdUseCase>(GetEventByIdUseCase(eventRepository: getIt<EventRepository>(), logger: getIt<Logger>()));
+  getIt.registerSingleton<GetEventByIdUseCase>(
+    GetEventByIdUseCase(
+      eventRepository: getIt<EventRepository>(),
+      logger: getIt<Logger>(),
+    ),
+  );
 
-  getIt.registerSingleton<ListEventsUseCase>(ListEventsUseCase(eventRepository: getIt<EventRepository>(), logger: getIt<Logger>()));
+  getIt.registerSingleton<ListEventsUseCase>(
+    ListEventsUseCase(
+      eventRepository: getIt<EventRepository>(),
+      logger: getIt<Logger>(),
+    ),
+  );
 
   /// Usecases - Application
-  getIt.registerSingleton<CreateApplicationUseCase>(CreateApplicationUseCase(applicationRepository: getIt<ApplicationRepository>(), eventRepository: getIt<EventRepository>()));
+  getIt.registerSingleton<CreateApplicationUseCase>(
+    CreateApplicationUseCase(
+      applicationRepository: getIt<ApplicationRepository>(),
+      eventRepository: getIt<EventRepository>(),
+    ),
+  );
 
-  getIt.registerSingleton<UpdateApplicationUseCase>(UpdateApplicationUseCase(applicationRepository: getIt<ApplicationRepository>(), eventRepository: getIt<EventRepository>()));
+  getIt.registerSingleton<UpdateApplicationUseCase>(
+    UpdateApplicationUseCase(
+      applicationRepository: getIt<ApplicationRepository>(),
+      eventRepository: getIt<EventRepository>(),
+    ),
+  );
 
-  getIt.registerSingleton<CancelApplicationUseCase>(CancelApplicationUseCase(getIt<ApplicationRepository>()));
+  getIt.registerSingleton<CancelApplicationUseCase>(
+    CancelApplicationUseCase(getIt<ApplicationRepository>()),
+  );
 
   /// Usecases - Notification
-  getIt.registerSingleton<CreateNotificationUseCase>(CreateNotificationUseCase(getIt<NotificationRepository>()));
+  getIt.registerSingleton<CreateNotificationUseCase>(
+    CreateNotificationUseCase(getIt<NotificationRepository>()),
+  );
 
-  getIt.registerSingleton<MarkNotificationAsReadUseCase>(MarkNotificationAsReadUseCase(getIt<NotificationRepository>()));
+  getIt.registerSingleton<MarkNotificationAsReadUseCase>(
+    MarkNotificationAsReadUseCase(getIt<NotificationRepository>()),
+  );
 
-  getIt.registerSingleton<GetUserNotificationsUseCase>(GetUserNotificationsUseCase(getIt<NotificationRepository>()));
+  getIt.registerSingleton<GetUserNotificationsUseCase>(
+    GetUserNotificationsUseCase(getIt<NotificationRepository>()),
+  );
 
-  await _seedMockData();
+  if (resolvedConfig.useMocks) {
+    await _seedMockData();
+  }
 }
 
 Future<void> _seedMockData() async {
@@ -125,7 +238,10 @@ Future<void> _seedMockData() async {
   prefs.setString('mock_slots', jsonEncode(slotsByEvent));
 
   final applications = await localMockDataSource.loadApplications();
-  final applicationsMap = applications.fold<Map<String, dynamic>>({}, (map, application) {
+  final applicationsMap = applications.fold<Map<String, dynamic>>({}, (
+    map,
+    application,
+  ) {
     map[application.id] = application.toJson();
     return map;
   });
@@ -134,7 +250,9 @@ Future<void> _seedMockData() async {
   final chatMessages = await localMockDataSource.loadChatMessages();
   final chatMessagesByChat = <String, List<Map<String, dynamic>>>{};
   for (final message in chatMessages) {
-    chatMessagesByChat.putIfAbsent(message.chatId, () => []).add(message.toJson());
+    chatMessagesByChat
+        .putIfAbsent(message.chatId, () => [])
+        .add(message.toJson());
   }
   prefs.setString('mock_chat_messages', jsonEncode(chatMessagesByChat));
 
@@ -143,18 +261,36 @@ Future<void> _seedMockData() async {
 
 /// Mock Local Auth Datasource для разработки
 class MockLocalAuthDataSourceImpl implements LocalAuthDataSource {
+  static const String _currentUserKey = 'auth_current_user';
+  final SharedPreferences _prefs;
+
+  MockLocalAuthDataSourceImpl(this._prefs);
+
   UserModel? _currentUser;
 
   @override
-  Future<UserModel?> getCurrentUser() async => _currentUser;
+  Future<UserModel?> getCurrentUser() async {
+    if (_currentUser != null) {
+      return _currentUser;
+    }
+    final rawUser = _prefs.getString(_currentUserKey);
+    if (rawUser == null) {
+      return null;
+    }
+    final Map<String, dynamic> decoded = jsonDecode(rawUser);
+    _currentUser = UserModel.fromJson(decoded);
+    return _currentUser;
+  }
 
   @override
   Future<void> saveCurrentUser(UserModel user) async {
     _currentUser = user;
+    await _prefs.setString(_currentUserKey, jsonEncode(user.toJson()));
   }
 
   @override
   Future<void> signOut() async {
     _currentUser = null;
+    await _prefs.remove(_currentUserKey);
   }
 }

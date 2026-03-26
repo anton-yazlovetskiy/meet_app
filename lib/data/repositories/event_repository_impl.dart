@@ -9,10 +9,7 @@ class EventRepositoryImpl implements EventRepository {
   final EventRemoteDataSource remoteDataSource;
   final EventLocalDataSource localDataSource;
 
-  EventRepositoryImpl({
-    required this.remoteDataSource,
-    required this.localDataSource,
-  });
+  EventRepositoryImpl({required this.remoteDataSource, required this.localDataSource});
 
   @override
   Future<Event> createEvent({
@@ -50,7 +47,9 @@ class EventRepositoryImpl implements EventRepository {
         applicants: [],
         slotStats: [],
         chatId: 'chat_${DateTime.now().millisecondsSinceEpoch}',
-        expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+
+        ///TODO здесь нужно создать дефолтную сводку расходов, а не просто пустую
+        expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
         isArchived: false,
       );
 
@@ -74,25 +73,9 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<List<Event>> listEvents({
-    String? userId,
-    List<String>? tags,
-    bool? isPublic,
-    EventStatus? status,
-    String? searchQuery,
-    int limit = 20,
-    int offset = 0,
-  }) async {
+  Future<List<Event>> listEvents({String? userId, List<String>? tags, bool? isPublic, EventStatus? status, String? searchQuery, int limit = 20, int offset = 0}) async {
     try {
-      return await remoteDataSource.listEvents(
-        userId: userId,
-        tags: tags,
-        isPublic: isPublic,
-        status: status?.name,
-        searchQuery: searchQuery,
-        limit: limit,
-        offset: offset,
-      );
+      return await remoteDataSource.listEvents(userId: userId, tags: tags, isPublic: isPublic, status: status?.name, searchQuery: searchQuery, limit: limit, offset: offset);
     } catch (e) {
       final cached = await localDataSource.getCachedEvents();
       if (cached.isNotEmpty) return cached;
@@ -116,16 +99,7 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<void> updateEvent({
-    required String eventId,
-    String? title,
-    String? description,
-    List<String>? tags,
-    Location? location,
-    bool? isPublic,
-    int? maxParticipants,
-    double? price,
-  }) async {
+  Future<void> updateEvent({required String eventId, String? title, String? description, List<String>? tags, Location? location, bool? isPublic, int? maxParticipants, double? price}) async {
     try {
       final event = await getEventById(eventId);
       final updated = EventModel(

@@ -7,3 +7,4 @@ export 'event_action_log.dart';
 export 'chat_message.dart';
 export 'expense_item.dart';
 export 'notification.dart';
+export 'voting.dart';

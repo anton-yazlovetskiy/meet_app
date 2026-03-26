@@ -1,0 +1,94 @@
+[
+  {
+    "id": "voting_1",
+    "eventId": "event_1",
+    "title": "Выбор даты катка",
+    "description": "Выберите наиболее удобную дату для посещения катка",
+    "createdAt": "2026-03-23T09:00:00Z",
+    "expiresAt": "2026-03-25T18:00:00Z",
+    "options": [
+      {
+        "id": "opt_1",
+        "votingId": "voting_1",
+        "text": "Пятница, 10 апреля 18:00",
+        "votes": 3,
+        "voters": ["user_1", "user_2", "user_3"]
+      },
+      {
+        "id": "opt_2",
+        "votingId": "voting_1",
+        "text": "Суббота, 11 апреля 19:00",
+        "votes": 1,
+        "voters": ["user_4"]
+      },
+      {
+        "id": "opt_3",
+        "votingId": "voting_1",
+        "text": "Воскресенье, 12 апреля 18:00",
+        "votes": 1,
+        "voters": ["user_5"]
+      }
+    ],
+    "status": "active",
+    "winnerOptionId": null
+  },
+  {
+    "id": "voting_2",
+    "eventId": "event_3",
+    "title": "Выбор места для экскурсии",
+    "description": "Выберите наиболее интересное место для посещения",
+    "createdAt": "2026-03-18T14:00:00Z",
+    "expiresAt": "2026-03-20T18:00:00Z",
+    "options": [
+      {
+        "id": "opt_4",
+        "votingId": "voting_2",
+        "text": "Государственный исторический музей",
+        "votes": 4,
+        "voters": ["user_1", "user_2", "user_3", "user_4"]
+      },
+      {
+        "id": "opt_5",
+        "votingId": "voting_2",
+        "text": "Третьяковская галерея",
+        "votes": 1,
+        "voters": ["user_5"]
+      }
+    ],
+    "status": "completed",
+    "winnerOptionId": "opt_4"
+  },
+  {
+    "id": "voting_3",
+    "eventId": "event_2",
+    "title": "Выбор времени пикника",
+    "description": "Выберите наиболее удобное время для пикника",
+    "createdAt": "2026-04-08T08:00:00Z",
+    "expiresAt": "2026-04-09T18:00:00Z",
+    "options": [
+      {
+        "id": "opt_6",
+        "votingId": "voting_3",
+        "text": "Суббота, 12 апреля 12:00",
+        "votes": 2,
+        "voters": ["user_1", "user_2"]
+      },
+      {
+        "id": "opt_7",
+        "votingId": "voting_3",
+        "text": "Воскресенье, 13 апреля 14:00",
+        "votes": 2,
+        "voters": ["user_3", "user_4"]
+      },
+      {
+        "id": "opt_8",
+        "votingId": "voting_3",
+        "text": "Понедельник, 14 апреля 16:00",
+        "votes": 1,
+        "voters": ["user_5"]
+      }
+    ],
+    "status": "active",
+    "winnerOptionId": null
+  }
+]

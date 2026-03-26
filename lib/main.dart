@@ -1,17 +1,15 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
+import 'core/config/app_config.dart';
 import 'core/di/service_locator.dart';
-import 'presentation/auth/auth_gate.dart';
-import 'presentation/auth/login_page.dart';
-import 'presentation/auth/license_page.dart' as auth_license;
-import 'presentation/event_list/event_list_page.dart';
-import 'presentation/event_list/event_create_page.dart';
-import 'presentation/settings/settings_page.dart';
+import 'core/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await setupDependencyInjection();
+  await setupDependencyInjection(appConfig: AppConfig.fromEnvironment());
   runApp(const MeetApp());
 }
 
@@ -23,13 +21,23 @@ class MeetApp extends StatefulWidget {
 }
 
 class _MeetAppState extends State<MeetApp> {
-  final ValueNotifier<Locale> _localeNotifier = ValueNotifier(const Locale('ru'));
-  final ValueNotifier<ThemeMode> _themeModeNotifier = ValueNotifier(ThemeMode.system);
+  final ValueNotifier<Locale> _localeNotifier = ValueNotifier(
+    Locale(PlatformDispatcher.instance.locale.countryCode.toString()),
+  );
+  final ValueNotifier<ThemeMode> _themeModeNotifier = ValueNotifier(
+    ThemeMode.system,
+  );
 
   @override
   Widget build(BuildContext context) {
-    final lightScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.light);
-    final darkScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark);
+    final lightScheme = ColorScheme.fromSeed(
+      seedColor: Colors.deepPurple,
+      brightness: Brightness.light,
+    );
+    final darkScheme = ColorScheme.fromSeed(
+      seedColor: Colors.deepPurple,
+      brightness: Brightness.dark,
+    );
 
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: _themeModeNotifier,
@@ -37,34 +45,28 @@ class _MeetAppState extends State<MeetApp> {
         return ValueListenableBuilder<Locale>(
           valueListenable: _localeNotifier,
           builder: (context, locale, child) {
-            return MaterialApp(
+            final appRouter = getIt<AppRouter>();
+            return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'King of Time',
               locale: locale,
               supportedLocales: AppLocalizations.supportedLocales,
-              localizationsDelegates: [AppLocalizations.delegate, GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
-              theme: ThemeData.from(colorScheme: lightScheme, useMaterial3: true),
-              darkTheme: ThemeData.from(colorScheme: darkScheme, useMaterial3: true),
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              theme: ThemeData.from(
+                colorScheme: lightScheme,
+                useMaterial3: true,
+              ),
+              darkTheme: ThemeData.from(
+                colorScheme: darkScheme,
+                useMaterial3: true,
+              ),
               themeMode: themeMode,
-              initialRoute: '/',
-              routes: {
-                '/': (context) => const AuthGate(),
-                '/login': (context) => LoginPage(currentLocale: locale, onLocaleChanged: (value) => _localeNotifier.value = value),
-                '/license': (context) => const auth_license.LicensePage(),
-                '/feed': (context) => EventListPage(
-                  onOpenSettings: () => Navigator.of(context).pushNamed('/settings'),
-                  currentLocale: locale,
-                  onLocaleChanged: (value) => _localeNotifier.value = value,
-                  onToggleTheme: () => _themeModeNotifier.value = _themeModeNotifier.value == ThemeMode.light ? ThemeMode.dark : ThemeMode.light,
-                ),
-                '/create': (context) => const EventCreatePage(),
-                '/settings': (context) => SettingsPage(
-                  currentLocale: locale,
-                  currentThemeMode: themeMode,
-                  onLocaleChanged: (value) => _localeNotifier.value = value,
-                  onThemeModeChanged: (value) => _themeModeNotifier.value = value,
-                ),
-              },
+              routerConfig: appRouter.config(),
             );
           },
         );

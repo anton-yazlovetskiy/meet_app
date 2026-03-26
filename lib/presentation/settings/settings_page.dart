@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/auto_route.dart';
 import '../../l10n/app_localizations.dart';
 
+@RoutePage()
 class SettingsPage extends StatelessWidget {
   final Locale currentLocale;
   final ThemeMode currentThemeMode;

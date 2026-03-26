@@ -49,6 +49,7 @@ class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
       premiumStatus: PremiumStatus.free,
       acceptedLicense: false,
       city: _getDefaultCity(locale),
+      tariff: Tariff(name: 'tarif name', progress: 0),
     );
     return _currentUser!;
   }
@@ -65,6 +66,7 @@ class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
       premiumStatus: PremiumStatus.physicalPremium,
       acceptedLicense: false,
       city: _getDefaultCity(locale),
+      tariff: Tariff(name: 'tarif name', progress: 0),
     );
     return _currentUser!;
   }
@@ -81,6 +83,7 @@ class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
       premiumStatus: PremiumStatus.businessLevel2,
       acceptedLicense: false,
       city: _getDefaultCity(locale),
+      tariff: Tariff(name: 'tarif name', progress: 0),
     );
     return _currentUser!;
   }
@@ -107,6 +110,7 @@ class MockFirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
         role: _currentUser!.role,
         premiumStatus: _currentUser!.premiumStatus,
         acceptedLicense: true,
+        tariff: Tariff(name: 'tarif name', progress: 0),
       );
     }
   }

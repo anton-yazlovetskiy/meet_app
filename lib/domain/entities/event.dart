@@ -137,12 +137,12 @@ class SlotStats {
 /// Сводка расходов
 class ExpenseSummary {
   /// Общая сумма
-  final double totalAmount;
+  final double total;
 
   /// Количество чеков
   final int receiptCount;
 
-  const ExpenseSummary({required this.totalAmount, required this.receiptCount});
+  const ExpenseSummary({required this.total, required this.receiptCount});
 }
 
 /// Тип мероприятия

@@ -57,7 +57,7 @@ class ExpenseSummaryConverter implements JsonConverter<ExpenseSummary, Map<Strin
 
   @override
   Map<String, dynamic> toJson(ExpenseSummary object) {
-    return ExpenseSummaryModel(totalAmount: object.totalAmount, receiptCount: object.receiptCount).toJson();
+    return ExpenseSummaryModel(total: object.total, receiptCount: object.receiptCount).toJson();
   }
 }
 
@@ -102,14 +102,14 @@ class SlotStatsModel extends SlotStats {
 
 @JsonSerializable()
 class ExpenseSummaryModel extends ExpenseSummary {
-  ExpenseSummaryModel({required super.totalAmount, required super.receiptCount});
+  ExpenseSummaryModel({required super.total, required super.receiptCount});
 
   factory ExpenseSummaryModel.fromJson(Map<String, dynamic> json) => _$ExpenseSummaryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ExpenseSummaryModelToJson(this);
 
   factory ExpenseSummaryModel.fromEntity(ExpenseSummary summary) {
-    return ExpenseSummaryModel(totalAmount: summary.totalAmount, receiptCount: summary.receiptCount);
+    return ExpenseSummaryModel(total: summary.total, receiptCount: summary.receiptCount);
   }
 }
 
@@ -163,7 +163,7 @@ class EventModel extends Event {
           ? json['slotStats'].map<SlotStatsModel>((e) => e is Map<String, dynamic> ? SlotStatsModel.fromJson(e) : SlotStatsModel(slotId: 'unknown', votes: 0, voters: [])).toList()
           : [],
       chatId: json['chatId']?.toString() ?? 'default_chat',
-      expenseSummary: json['expenseSummary'] is Map<String, dynamic> ? ExpenseSummaryModel.fromJson(json['expenseSummary']) : ExpenseSummaryModel(totalAmount: 0, receiptCount: 0),
+      expenseSummary: json['expenseSummary'] is Map<String, dynamic> ? ExpenseSummaryModel.fromJson(json['expenseSummary']) : ExpenseSummaryModel(total: 0, receiptCount: 0),
       isArchived: json['isArchived'] is bool ? json['isArchived'] : false,
     );
   }

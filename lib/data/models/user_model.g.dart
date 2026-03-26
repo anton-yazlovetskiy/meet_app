@@ -25,6 +25,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   premiumStatus: $enumDecode(_$PremiumStatusEnumMap, json['premiumStatus']),
   acceptedLicense: json['acceptedLicense'] as bool,
   city: json['city'] as String?,
+  tariff: Tariff.fromJson(json['tariff'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -42,6 +43,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'premiumStatus': _$PremiumStatusEnumMap[instance.premiumStatus]!,
   'acceptedLicense': instance.acceptedLicense,
   'city': instance.city,
+  'tariff': instance.tariff.toJson(),
 };
 
 const _$UserStatusEnumMap = {

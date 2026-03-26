@@ -47,7 +47,7 @@ void main() {
         applicants: [],
         slotStats: [],
         chatId: 'chat_1',
-        expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+        expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
         isArchived: false,
       );
 
@@ -80,7 +80,7 @@ void main() {
         applicants: [],
         slotStats: [],
         chatId: 'chat_1',
-        expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+        expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
         isArchived: false,
       );
 
@@ -105,7 +105,7 @@ void main() {
         applicants: [],
         slotStats: [],
         chatId: 'chat_2',
-        expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+        expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
         isArchived: false,
       );
 
@@ -139,7 +139,7 @@ void main() {
         applicants: [],
         slotStats: [],
         chatId: 'chat_1',
-        expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+        expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
         isArchived: false,
       );
 
@@ -171,7 +171,7 @@ void main() {
         applicants: [],
         slotStats: [],
         chatId: 'chat_1',
-        expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+        expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
         isArchived: false,
       );
 
@@ -196,7 +196,7 @@ void main() {
         applicants: [],
         slotStats: [],
         chatId: 'chat_2',
-        expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+        expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
         isArchived: false,
       );
 

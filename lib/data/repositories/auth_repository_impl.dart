@@ -9,12 +9,19 @@ class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuthDataSource firebaseAuthDataSource;
   final LocalAuthDataSource localAuthDataSource;
 
-  AuthRepositoryImpl({required this.firebaseAuthDataSource, required this.localAuthDataSource});
+  AuthRepositoryImpl({
+    required this.firebaseAuthDataSource,
+    required this.localAuthDataSource,
+  });
 
   @override
   Future<User?> getCurrentUser() async {
     try {
-      return await firebaseAuthDataSource.getCurrentUser();
+      final firebaseUser = await firebaseAuthDataSource.getCurrentUser();
+      if (firebaseUser != null) {
+        return firebaseUser;
+      }
+      return await localAuthDataSource.getCurrentUser();
     } catch (e) {
       return await localAuthDataSource.getCurrentUser();
     }

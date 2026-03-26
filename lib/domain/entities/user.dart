@@ -42,6 +42,9 @@ class User {
   /// Принято ли лицензионное соглашение
   final bool acceptedLicense;
 
+  /// Тариф
+  final Tariff tariff;
+
   const User({
     required this.id,
     required this.name,
@@ -57,7 +60,29 @@ class User {
     required this.premiumStatus,
     required this.acceptedLicense,
     this.city,
+    required this.tariff,
   });
+}
+
+/// Тариф пользователя
+class Tariff {
+  /// Название тарифа
+  final String name;
+
+  /// Прогресс (0.0 - 1.0)
+  final double progress;
+
+  const Tariff({required this.name, required this.progress});
+
+  /// Создает Tariff из JSON
+  factory Tariff.fromJson(Map<String, dynamic> json) {
+    return Tariff(name: json['name']?.toString() ?? 'unknown', progress: json['progress'] is num ? json['progress'].toDouble() : 0.0);
+  }
+
+  /// Преобразует Tariff в JSON
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'progress': progress};
+  }
 }
 
 /// Статус пользователя

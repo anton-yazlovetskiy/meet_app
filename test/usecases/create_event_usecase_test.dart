@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logger/logger.dart';
 import 'package:meet_app/domain/usecases/event/event_usecases.dart';
 import 'package:meet_app/domain/repositories/event_repository.dart';
 import 'package:meet_app/domain/repositories/user_repository.dart';
@@ -43,7 +44,7 @@ class MockEventRepository implements EventRepository {
       applicants: [],
       slotStats: [],
       chatId: 'chat_${DateTime.now().millisecondsSinceEpoch}',
-      expenseSummary: const ExpenseSummary(totalAmount: 0, receiptCount: 0),
+      expenseSummary: const ExpenseSummary(total: 0, receiptCount: 0),
       isArchived: false,
     );
     _events.add(event);
@@ -135,6 +136,7 @@ class MockUserRepository implements UserRepository {
       role: UserRole.user,
       premiumStatus: PremiumStatus.free,
       acceptedLicense: true,
+      tariff: Tariff(name: 'tarif name', progress: 0),
     );
   }
 
@@ -169,7 +171,7 @@ void main() {
     setUp(() {
       eventRepository = MockEventRepository();
       userRepository = MockUserRepository();
-      createEventUseCase = CreateEventUseCase(eventRepository: eventRepository, userRepository: userRepository);
+      createEventUseCase = CreateEventUseCase(eventRepository: eventRepository, userRepository: userRepository, logger: Logger());
     });
 
     test('should create event with valid parameters', () async {

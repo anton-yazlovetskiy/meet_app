@@ -12,7 +12,12 @@
     "blockedUntil": null,
     "role": "user",
     "premiumStatus": "free",
-    "acceptedLicense": true
+    "acceptedLicense": true,
+    "createdAt": "2026-03-01T10:00:00Z",
+    "lastActiveAt": "2026-03-23T14:00:00Z",
+    "notificationsEnabled": true,
+    "language": "ru",
+    "timezone": "Europe/Moscow"
   },
   {
     "id": "user_2",
@@ -27,7 +32,12 @@
     "blockedUntil": null,
     "role": "user",
     "premiumStatus": "physicalPremium",
-    "acceptedLicense": true
+    "acceptedLicense": true,
+    "createdAt": "2026-03-02T11:00:00Z",
+    "lastActiveAt": "2026-03-23T15:00:00Z",
+    "notificationsEnabled": true,
+    "language": "ru",
+    "timezone": "Europe/Moscow"
   },
   {
     "id": "user_3",
@@ -42,7 +52,52 @@
     "blockedUntil": null,
     "role": "user",
     "premiumStatus": "businessLevel2",
-    "acceptedLicense": true
+    "acceptedLicense": true,
+    "createdAt": "2026-03-03T09:00:00Z",
+    "lastActiveAt": "2026-03-23T13:00:00Z",
+    "notificationsEnabled": true,
+    "language": "ru",
+    "timezone": "Europe/Moscow"
+  },
+  {
+    "id": "user_4",
+    "name": "Алексей Иванов",
+    "avatarUrl": "https://example.com/avatar4.jpg",
+    "email": "alex@example.com",
+    "gender": "male",
+    "birthDate": "1992-08-10",
+    "age": 31,
+    "rating": 4.2,
+    "status": "active",
+    "blockedUntil": null,
+    "role": "user",
+    "premiumStatus": "free",
+    "acceptedLicense": true,
+    "createdAt": "2026-03-04T12:00:00Z",
+    "lastActiveAt": "2026-03-22T18:00:00Z",
+    "notificationsEnabled": false,
+    "language": "ru",
+    "timezone": "Europe/Moscow"
+  },
+  {
+    "id": "user_5",
+    "name": "Елена Кузнецова",
+    "avatarUrl": "https://example.com/avatar5.jpg",
+    "email": "elena@example.com",
+    "gender": "female",
+    "birthDate": "1996-12-05",
+    "age": 27,
+    "rating": 4.7,
+    "status": "active",
+    "blockedUntil": null,
+    "role": "user",
+    "premiumStatus": "free",
+    "acceptedLicense": true,
+    "createdAt": "2026-03-05T14:00:00Z",
+    "lastActiveAt": "2026-03-23T16:00:00Z",
+    "notificationsEnabled": true,
+    "language": "ru",
+    "timezone": "Europe/Moscow"
   },
   {
     "id": "admin_1",
@@ -57,6 +112,11 @@
     "blockedUntil": null,
     "role": "admin",
     "premiumStatus": "free",
-    "acceptedLicense": true
+    "acceptedLicense": true,
+    "createdAt": "2026-02-28T10:00:00Z",
+    "lastActiveAt": "2026-03-23T17:00:00Z",
+    "notificationsEnabled": true,
+    "language": "ru",
+    "timezone": "Europe/Moscow"
   }
 ]

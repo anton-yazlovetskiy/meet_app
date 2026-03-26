@@ -1,0 +1,53 @@
+[
+  {
+    "id": "notif_1",
+    "userId": "user_1",
+    "type": "event_created",
+    "title": "Создано новое событие",
+    "message": "Событие 'Каток' было создано",
+    "eventId": "event_1",
+    "applicationId": null,
+    "payload": {
+      "eventName": "Каток",
+      "eventDate": "2026-04-10T18:00:00Z"
+    },
+    "createdAt": "2026-03-23T11:00:00Z",
+    "isRead": false,
+    "actionLabel": "Посмотреть",
+    "actionType": "view_event"
+  },
+  {
+    "id": "notif_2",
+    "userId": "user_2",
+    "type": "application_status_changed",
+    "title": "Статус заявки изменен",
+    "message": "Ваша заявка на событие 'Каток' была одобрена",
+    "eventId": "event_1",
+    "applicationId": "app_1",
+    "payload": {
+      "eventName": "Каток",
+      "status": "approved"
+    },
+    "createdAt": "2026-03-23T12:00:00Z",
+    "isRead": true,
+    "actionLabel": "Посмотреть заявку",
+    "actionType": "view_application"
+  },
+  {
+    "id": "notif_3",
+    "userId": "user_3",
+    "type": "event_reminder",
+    "title": "Напоминание о событии",
+    "message": "Напоминаем, что завтра состоится экскурсия в музей",
+    "eventId": "event_3",
+    "applicationId": null,
+    "payload": {
+      "eventName": "Экскурсия в музей",
+      "eventDate": "2026-04-05T20:00:00Z"
+    },
+    "createdAt": "2026-04-04T10:00:00Z",
+    "isRead": false,
+    "actionLabel": "Посмотреть",
+    "actionType": "view_event"
+  }
+]

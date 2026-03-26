@@ -50,13 +50,13 @@ Map<String, dynamic> _$SlotStatsModelToJson(SlotStatsModel instance) =>
 
 ExpenseSummaryModel _$ExpenseSummaryModelFromJson(Map<String, dynamic> json) =>
     ExpenseSummaryModel(
-      totalAmount: (json['totalAmount'] as num).toDouble(),
+      total: (json['total'] as num).toDouble(),
       receiptCount: (json['receiptCount'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ExpenseSummaryModelToJson(
   ExpenseSummaryModel instance,
 ) => <String, dynamic>{
-  'totalAmount': instance.totalAmount,
+  'total': instance.total,
   'receiptCount': instance.receiptCount,
 };

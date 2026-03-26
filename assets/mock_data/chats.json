@@ -1,0 +1,32 @@
+[
+  {
+    "id": "chat_1",
+    "eventId": "event_1",
+    "name": "Каток - Обсуждение",
+    "description": "Чат для обсуждения деталей катка",
+    "createdAt": "2026-03-23T10:00:00Z",
+    "lastMessageAt": "2026-03-23T10:45:00Z",
+    "participants": ["user_1", "user_2", "user_3", "user_4", "user_5"],
+    "messages": ["msg_1", "msg_2"]
+  },
+  {
+    "id": "chat_2",
+    "eventId": "event_3",
+    "name": "Экскурсия в музей",
+    "description": "Чат для обсуждения экскурсии в музей",
+    "createdAt": "2026-03-20T12:00:00Z",
+    "lastMessageAt": "2026-03-20T13:00:00Z",
+    "participants": ["user_1", "user_2", "user_3", "user_4", "user_5"],
+    "messages": ["msg_3"]
+  },
+  {
+    "id": "chat_3",
+    "eventId": "event_2",
+    "name": "Пикник в парке",
+    "description": "Чат для обсуждения пикника в парке",
+    "createdAt": "2026-04-08T09:00:00Z",
+    "lastMessageAt": "2026-04-08T09:00:00Z",
+    "participants": ["user_1", "user_2", "user_3", "user_4", "user_5"],
+    "messages": []
+  }
+]

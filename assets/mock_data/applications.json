@@ -16,5 +16,32 @@
     "status": "pending",
     "updatedAt": "2026-03-22T16:00:00Z",
     "createdAt": "2026-03-22T16:00:00Z"
+  },
+  {
+    "id": "app_3",
+    "eventId": "event_2",
+    "userId": "user_3",
+    "selectedSlotIds": ["slot_2"],
+    "status": "approved",
+    "updatedAt": "2026-04-09T14:00:00Z",
+    "createdAt": "2026-04-08T10:00:00Z"
+  },
+  {
+    "id": "app_4",
+    "eventId": "event_1",
+    "userId": "user_4",
+    "selectedSlotIds": ["slot_1"],
+    "status": "pending",
+    "updatedAt": "2026-03-23T12:00:00Z",
+    "createdAt": "2026-03-23T12:00:00Z"
+  },
+  {
+    "id": "app_5",
+    "eventId": "event_3",
+    "userId": "user_5",
+    "selectedSlotIds": ["slot_5"],
+    "status": "rejected",
+    "updatedAt": "2026-03-23T13:00:00Z",
+    "createdAt": "2026-03-23T13:00:00Z"
   }
 ]

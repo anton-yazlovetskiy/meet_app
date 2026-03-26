@@ -46,6 +46,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
         role: user.role,
         premiumStatus: user.premiumStatus,
         acceptedLicense: user.acceptedLicense,
+        tariff: Tariff(name: 'tarif name', progress: 0),
       );
       _saveUsers(users);
     }
@@ -73,6 +74,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
         role: user.role,
         premiumStatus: user.premiumStatus,
         acceptedLicense: user.acceptedLicense,
+        tariff: Tariff(name: 'tarif name', progress: 0),
       );
       _saveUsers(users);
     }
@@ -96,6 +98,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
         role: user.role,
         premiumStatus: user.premiumStatus,
         acceptedLicense: user.acceptedLicense,
+        tariff: Tariff(name: 'tarif name', progress: 0),
       );
       _saveUsers(users);
     }
@@ -118,6 +121,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
         role: user.role,
         premiumStatus: user.premiumStatus,
         acceptedLicense: user.acceptedLicense,
+        tariff: Tariff(name: 'tarif name', progress: 0),
       );
       _saveUsers(users);
     }
@@ -140,6 +144,7 @@ class MockUserRemoteDataSourceImpl implements UserRemoteDataSource {
         role: user.role,
         premiumStatus: newStatus,
         acceptedLicense: user.acceptedLicense,
+        tariff: Tariff(name: 'tarif name', progress: 0),
       );
       _saveUsers(users);
     }
