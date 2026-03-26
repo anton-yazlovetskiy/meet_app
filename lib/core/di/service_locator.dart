@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../domain/index.dart';
-import '../../data/index.dart';
-import '../config/app_config.dart';
 
+import '../../data/index.dart';
+import '../../domain/index.dart';
+import '../config/app_config.dart';
 import '../router/app_router.dart';
 
 final getIt = GetIt.instance;
@@ -31,7 +31,7 @@ Future<void> setupDependencyInjection({AppConfig? appConfig}) async {
         lineLength: 120,
         colors: true,
         printEmojis: true,
-        printTime: true,
+        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       ),
     ),
   );
@@ -205,7 +205,15 @@ Future<void> setupDependencyInjection({AppConfig? appConfig}) async {
   );
 
   if (resolvedConfig.useMocks) {
-    await _seedMockData();
+    try {
+      await _seedMockData();
+    } catch (e, stackTrace) {
+      getIt<Logger>().e(
+        'Mock data seed failed. App continues without seeded mocks.',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 }
 
@@ -277,9 +285,15 @@ class MockLocalAuthDataSourceImpl implements LocalAuthDataSource {
     if (rawUser == null) {
       return null;
     }
-    final Map<String, dynamic> decoded = jsonDecode(rawUser);
-    _currentUser = UserModel.fromJson(decoded);
-    return _currentUser;
+    try {
+      final Map<String, dynamic> decoded = jsonDecode(rawUser);
+      _currentUser = UserModel.fromJson(decoded);
+      return _currentUser;
+    } catch (_) {
+      await _prefs.remove(_currentUserKey);
+      _currentUser = null;
+      return null;
+    }
   }
 
   @override

@@ -2,8 +2,14 @@
   "dart.flutterRunArguments": [],
   "dart.flutterTestArguments": [],
   "dart.flutterCustomDevices": [],
+  "dart.lineLength": 80,
   "[dart]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "Dart-Code.dart-code"
-  }
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "never",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "editor.formatOnSaveMode": "file"
 }

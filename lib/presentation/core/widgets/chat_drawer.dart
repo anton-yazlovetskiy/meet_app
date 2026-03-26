@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meet_app/l10n/app_localizations.dart';
 import 'package:meet_app/domain/entities/index.dart';
 
 class ChatDrawer extends StatelessWidget {
@@ -8,7 +7,13 @@ class ChatDrawer extends StatelessWidget {
   final Function() onRefresh;
   final bool isLoading;
 
-  const ChatDrawer({super.key, required this.messages, required this.onSendMessage, required this.onRefresh, this.isLoading = false});
+  const ChatDrawer({
+    super.key,
+    required this.messages,
+    required this.onSendMessage,
+    required this.onRefresh,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,9 @@ class ChatDrawer extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4)],
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4),
+              ],
             ),
             child: Row(
               children: [
@@ -32,7 +39,11 @@ class ChatDrawer extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Чат',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
                 const Spacer(),
                 IconButton(
@@ -62,13 +73,24 @@ class ChatDrawer extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  Text(message.senderId, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold)),
+                                  Text(
+                                    message.senderId,
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
                                   const Spacer(),
-                                  Text(message.timestamp.toIso8601String(), style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey)),
+                                  Text(
+                                    message.timestamp.toIso8601String(),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(color: Colors.grey),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 4),
-                              Text(message.text, style: Theme.of(context).textTheme.bodyMedium),
+                              Text(
+                                message.text,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                             ],
                           ),
                         ),
@@ -82,7 +104,9 @@ class ChatDrawer extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4)],
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4),
+              ],
             ),
             child: Row(
               children: [
@@ -92,16 +116,24 @@ class ChatDrawer extends StatelessWidget {
                       hintText: 'Введите сообщение...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).dividerColor,
+                        ),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                     ),
                     onSubmitted: onSendMessage,
                   ),
                 ),
                 const SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send, color: Theme.of(context).colorScheme.primary),
+                  icon: Icon(
+                    Icons.send,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   onPressed: () => onSendMessage(''),
                 ),
               ],

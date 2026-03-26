@@ -24,19 +24,38 @@ class _AuthGatePageState extends State<AuthGatePage> {
   }
 
   Future<void> _resolve() async {
-    final user = await _authRepository.getCurrentUser();
-    if (!mounted) {
-      return;
+    try {
+      final user = await _authRepository.getCurrentUser();
+      if (!mounted) {
+        return;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        if (user == null) {
+          _router.replace(LoginRoute());
+          return;
+        }
+        _router.replace(EventListRoute());
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        _router.replace(LoginRoute());
+      });
     }
-    if (user == null) {
-      _router.replace(LoginRoute());
-      return;
-    }
-    _router.replace(EventListRoute());
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
   }
 }

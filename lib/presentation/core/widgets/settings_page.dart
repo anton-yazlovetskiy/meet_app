@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:meet_app/l10n/app_localizations.dart';
 import 'package:meet_app/domain/entities/index.dart';
-import 'package:meet_app/presentation/core/widgets/app_bar.dart';
-import 'package:meet_app/presentation/core/widgets/profile_card.dart';
+import 'package:meet_app/l10n/app_localizations.dart';
 import 'package:meet_app/presentation/core/widgets/admin_panel.dart';
+import 'package:meet_app/presentation/core/widgets/profile_card.dart';
 
 class SettingsPage extends StatelessWidget {
   final User currentUser;
@@ -12,7 +11,14 @@ class SettingsPage extends StatelessWidget {
   final Function() onSwitchTheme;
   final bool isDarkTheme;
 
-  const SettingsPage({super.key, required this.currentUser, required this.onUpdateProfile, required this.onLogout, required this.onSwitchTheme, required this.isDarkTheme});
+  const SettingsPage({
+    super.key,
+    required this.currentUser,
+    required this.onUpdateProfile,
+    required this.onLogout,
+    required this.onSwitchTheme,
+    required this.isDarkTheme,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +27,19 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Настройки'),
-        actions: [IconButton(icon: Icon(Icons.wb_sunny), onPressed: onSwitchTheme)],
+        actions: [
+          IconButton(icon: Icon(Icons.wb_sunny), onPressed: onSwitchTheme),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Профиль
-          ProfileCard(user: currentUser, onEditProfile: () => _openProfileEdit(context), onLogout: onLogout),
+          ProfileCard(
+            user: currentUser,
+            onEditProfile: () => _openProfileEdit(context),
+            onLogout: onLogout,
+          ),
 
           const SizedBox(height: 16),
 
@@ -38,21 +50,35 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Настройки', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Настройки',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 16),
 
                   // Тема
                   ListTile(
-                    leading: Icon(Icons.color_lens, color: Theme.of(context).colorScheme.primary),
+                    leading: Icon(
+                      Icons.color_lens,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: const Text('Тема'),
-                    trailing: Switch(value: isDarkTheme, onChanged: (value) => onSwitchTheme()),
+                    trailing: Switch(
+                      value: isDarkTheme,
+                      onChanged: (value) => onSwitchTheme(),
+                    ),
                   ),
 
                   const Divider(),
 
                   // Уведомления
                   ListTile(
-                    leading: Icon(Icons.notifications, color: Theme.of(context).colorScheme.primary),
+                    leading: Icon(
+                      Icons.notifications,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: const Text('Уведомления'),
                     trailing: Switch(value: true, onChanged: (value) {}),
                   ),
@@ -61,7 +87,10 @@ class SettingsPage extends StatelessWidget {
 
                   // Язык
                   ListTile(
-                    leading: Icon(Icons.language, color: Theme.of(context).colorScheme.primary),
+                    leading: Icon(
+                      Icons.language,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: const Text('Язык'),
                     trailing: DropdownButton<String>(
                       value: 'ru',
@@ -77,7 +106,10 @@ class SettingsPage extends StatelessWidget {
 
                   // Конфиденциальность
                   ListTile(
-                    leading: Icon(Icons.lock, color: Theme.of(context).colorScheme.primary),
+                    leading: Icon(
+                      Icons.lock,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: const Text('Конфиденциальность'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _openPrivacySettings(context),
@@ -87,7 +119,10 @@ class SettingsPage extends StatelessWidget {
 
                   // Помощь
                   ListTile(
-                    leading: Icon(Icons.help, color: Theme.of(context).colorScheme.primary),
+                    leading: Icon(
+                      Icons.help,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: const Text('Помощь'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _openHelp(context),
@@ -138,7 +173,10 @@ class SettingsPage extends StatelessWidget {
         title: const Text('Подтвердите удаление'),
         content: Text('Удалить пользователя ${user.name}?'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Отмена')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Отмена'),
+          ),
           ElevatedButton(
             onPressed: () {
               // TODO: Удалить пользователя
@@ -162,7 +200,10 @@ class SettingsPage extends StatelessWidget {
         title: const Text('Подтвердите удаление'),
         content: Text('Удалить мероприятие ${event.title}?'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Отмена')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Отмена'),
+          ),
           ElevatedButton(
             onPressed: () {
               // TODO: Удалить мероприятие

@@ -1,6 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/auto_route.dart';
+
 import '../../l10n/app_localizations.dart';
 
 @RoutePage()
@@ -10,7 +10,13 @@ class SettingsPage extends StatelessWidget {
   final void Function(Locale locale) onLocaleChanged;
   final void Function(ThemeMode themeMode) onThemeModeChanged;
 
-  const SettingsPage({super.key, required this.currentLocale, required this.currentThemeMode, required this.onLocaleChanged, required this.onThemeModeChanged});
+  const SettingsPage({
+    super.key,
+    required this.currentLocale,
+    required this.currentThemeMode,
+    required this.onLocaleChanged,
+    required this.onThemeModeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +28,23 @@ class SettingsPage extends StatelessWidget {
         children: [
           ListTile(
             title: Text(l10n.interfaceLanguage),
-            subtitle: Text(currentLocale.languageCode == 'ru' ? l10n.russian : l10n.english),
+            subtitle: Text(
+              currentLocale.languageCode == 'ru' ? l10n.russian : l10n.english,
+            ),
             trailing: DropdownButton<Locale>(
               value: currentLocale,
               onChanged: (Locale? value) {
                 if (value != null) onLocaleChanged(value);
               },
               items: [
-                DropdownMenuItem(value: const Locale('ru'), child: Text(l10n.russian)),
-                DropdownMenuItem(value: const Locale('en'), child: Text(l10n.english)),
+                DropdownMenuItem(
+                  value: const Locale('ru'),
+                  child: Text(l10n.russian),
+                ),
+                DropdownMenuItem(
+                  value: const Locale('en'),
+                  child: Text(l10n.english),
+                ),
               ],
             ),
           ),
@@ -50,9 +64,18 @@ class SettingsPage extends StatelessWidget {
                 if (value != null) onThemeModeChanged(value);
               },
               items: [
-                DropdownMenuItem(value: ThemeMode.system, child: Text(l10n.systemTheme)),
-                DropdownMenuItem(value: ThemeMode.light, child: Text(l10n.lightTheme)),
-                DropdownMenuItem(value: ThemeMode.dark, child: Text(l10n.darkTheme)),
+                DropdownMenuItem(
+                  value: ThemeMode.system,
+                  child: Text(l10n.systemTheme),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.light,
+                  child: Text(l10n.lightTheme),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.dark,
+                  child: Text(l10n.darkTheme),
+                ),
               ],
             ),
           ),
