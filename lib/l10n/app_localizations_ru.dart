@@ -252,4 +252,121 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get locationParsingError_networkError =>
       'Ошибка сети. Не удалось обработать короткую ссылку. Проверьте ваше интернет-соединение.';
+
+  @override
+  String get eventSearchHint => 'Поиск мероприятий';
+
+  @override
+  String get cityNotSelected => 'Город не выбран';
+
+  @override
+  String get resetAll => 'Сбросить всё';
+
+  @override
+  String get sortDate => 'Сортировка по дате';
+
+  @override
+  String get sortPrice => 'Сортировка по цене';
+
+  @override
+  String get filterAllSimple => 'Все';
+
+  @override
+  String get filterMine => 'Мои';
+
+  @override
+  String get filterParticipating => 'Участвую';
+
+  @override
+  String get filterAppliedSimple => 'Заявки';
+
+  @override
+  String get filterArchive => 'Архив';
+
+  @override
+  String get joinEvent => 'Участвовать';
+
+  @override
+  String get leaveEvent => 'Отказаться';
+
+  @override
+  String get noPhotoLabel => 'Нет фото';
+
+  @override
+  String get tableLabel => 'Таблица';
+
+  @override
+  String get listLabel => 'Список';
+
+  @override
+  String get topSlotsLabel => 'Топ-слоты';
+
+  @override
+  String get addressLabel => 'Адрес';
+
+  @override
+  String get fixedSlotLabel => 'Слот: фиксирован';
+
+  @override
+  String get priceFreeLabel => 'Стоимость: бесплатно';
+
+  @override
+  String get priceLabel => 'Стоимость';
+
+  @override
+  String get messageLabel => 'Сообщение';
+
+  @override
+  String get memberLabel => 'Участник';
+
+  @override
+  String get ratingLabel => 'Рейтинг';
+
+  @override
+  String get messageSubtitle => 'Обсуждаем слот и детали.';
+
+  @override
+  String get tagsTooltip => 'Теги';
+
+  @override
+  String get notificationsLabel => 'Уведомления';
+
+  @override
+  String get profileLabel => 'Профиль';
+
+  @override
+  String get themeLabel => 'Тема';
+
+  @override
+  String get top3SlotsLabel => 'Топ-3 слота';
+
+  @override
+  String get newestLabel => 'Новые';
+
+  @override
+  String get oldestLabel => 'Старые';
+
+  @override
+  String get cityPlaceholder => 'Город не выбран';
+
+  @override
+  String get dayLabel => 'День';
+
+  @override
+  String get chatInputHint => 'Введите сообщение';
+
+  @override
+  String get sendLabel => 'Отправить';
+
+  @override
+  String get replyLabel => 'Ответить';
+
+  @override
+  String get tagMismatchLabel => 'Тэг не соответствует';
+
+  @override
+  String get collapseLabel => 'Свернуть';
+
+  @override
+  String get expandLabel => 'Развернуть';
 }

@@ -577,6 +577,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Network error. Could not resolve the short link. Please check your internet connection.'**
   String get locationParsingError_networkError;
+
+  /// No description provided for @eventSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search events'**
+  String get eventSearchHint;
+
+  /// No description provided for @cityNotSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'City not selected'**
+  String get cityNotSelected;
+
+  /// No description provided for @resetAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset all'**
+  String get resetAll;
+
+  /// No description provided for @sortDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date sort'**
+  String get sortDate;
+
+  /// No description provided for @sortPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price sort'**
+  String get sortPrice;
+
+  /// No description provided for @filterAllSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAllSimple;
+
+  /// No description provided for @filterMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Mine'**
+  String get filterMine;
+
+  /// No description provided for @filterParticipating.
+  ///
+  /// In en, this message translates to:
+  /// **'Participating'**
+  String get filterParticipating;
+
+  /// No description provided for @filterAppliedSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get filterAppliedSimple;
+
+  /// No description provided for @filterArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get filterArchive;
+
+  /// No description provided for @joinEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get joinEvent;
+
+  /// No description provided for @leaveEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leaveEvent;
+
+  /// No description provided for @noPhotoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'No photo'**
+  String get noPhotoLabel;
+
+  /// No description provided for @tableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Table'**
+  String get tableLabel;
+
+  /// No description provided for @listLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get listLabel;
+
+  /// No description provided for @topSlotsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Top slots'**
+  String get topSlotsLabel;
+
+  /// No description provided for @addressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get addressLabel;
+
+  /// No description provided for @fixedSlotLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot: fixed'**
+  String get fixedSlotLabel;
+
+  /// No description provided for @priceFreeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: free'**
+  String get priceFreeLabel;
+
+  /// No description provided for @priceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get priceLabel;
+
+  /// No description provided for @messageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get messageLabel;
+
+  /// No description provided for @memberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get memberLabel;
+
+  /// No description provided for @ratingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get ratingLabel;
+
+  /// No description provided for @messageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussing slot and details.'**
+  String get messageSubtitle;
+
+  /// No description provided for @tagsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tagsTooltip;
+
+  /// No description provided for @notificationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsLabel;
+
+  /// No description provided for @profileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileLabel;
+
+  /// No description provided for @themeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeLabel;
+
+  /// No description provided for @top3SlotsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Top-3 slots'**
+  String get top3SlotsLabel;
+
+  /// No description provided for @newestLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get newestLabel;
+
+  /// No description provided for @oldestLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get oldestLabel;
+
+  /// No description provided for @cityPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'City not selected'**
+  String get cityPlaceholder;
+
+  /// No description provided for @dayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get dayLabel;
+
+  /// No description provided for @chatInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a message'**
+  String get chatInputHint;
+
+  /// No description provided for @sendLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get sendLabel;
+
+  /// No description provided for @replyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get replyLabel;
+
+  /// No description provided for @tagMismatchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag does not match'**
+  String get tagMismatchLabel;
+
+  /// No description provided for @collapseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse'**
+  String get collapseLabel;
+
+  /// No description provided for @expandLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand'**
+  String get expandLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -252,4 +252,121 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get locationParsingError_networkError =>
       'Network error. Could not resolve the short link. Please check your internet connection.';
+
+  @override
+  String get eventSearchHint => 'Search events';
+
+  @override
+  String get cityNotSelected => 'City not selected';
+
+  @override
+  String get resetAll => 'Reset all';
+
+  @override
+  String get sortDate => 'Date sort';
+
+  @override
+  String get sortPrice => 'Price sort';
+
+  @override
+  String get filterAllSimple => 'All';
+
+  @override
+  String get filterMine => 'Mine';
+
+  @override
+  String get filterParticipating => 'Participating';
+
+  @override
+  String get filterAppliedSimple => 'Applied';
+
+  @override
+  String get filterArchive => 'Archive';
+
+  @override
+  String get joinEvent => 'Join';
+
+  @override
+  String get leaveEvent => 'Leave';
+
+  @override
+  String get noPhotoLabel => 'No photo';
+
+  @override
+  String get tableLabel => 'Table';
+
+  @override
+  String get listLabel => 'List';
+
+  @override
+  String get topSlotsLabel => 'Top slots';
+
+  @override
+  String get addressLabel => 'Address';
+
+  @override
+  String get fixedSlotLabel => 'Slot: fixed';
+
+  @override
+  String get priceFreeLabel => 'Price: free';
+
+  @override
+  String get priceLabel => 'Price';
+
+  @override
+  String get messageLabel => 'Message';
+
+  @override
+  String get memberLabel => 'Member';
+
+  @override
+  String get ratingLabel => 'Rating';
+
+  @override
+  String get messageSubtitle => 'Discussing slot and details.';
+
+  @override
+  String get tagsTooltip => 'Tags';
+
+  @override
+  String get notificationsLabel => 'Notifications';
+
+  @override
+  String get profileLabel => 'Profile';
+
+  @override
+  String get themeLabel => 'Theme';
+
+  @override
+  String get top3SlotsLabel => 'Top-3 slots';
+
+  @override
+  String get newestLabel => 'Newest';
+
+  @override
+  String get oldestLabel => 'Oldest';
+
+  @override
+  String get cityPlaceholder => 'City not selected';
+
+  @override
+  String get dayLabel => 'Day';
+
+  @override
+  String get chatInputHint => 'Write a message';
+
+  @override
+  String get sendLabel => 'Send';
+
+  @override
+  String get replyLabel => 'Reply';
+
+  @override
+  String get tagMismatchLabel => 'Tag does not match';
+
+  @override
+  String get collapseLabel => 'Collapse';
+
+  @override
+  String get expandLabel => 'Expand';
 }
