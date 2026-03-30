@@ -118,5 +118,11 @@
   "replyLabel": "Ответить",
   "tagMismatchLabel": "Тэг не соответствует",
   "collapseLabel": "Свернуть",
-  "expandLabel": "Развернуть"
+  "expandLabel": "Развернуть",
+  "applicationSubmittedShort": "Заявка подана",
+  "applicationCancelledShort": "Заявка отозвана",
+  "addToCalendarLabel": "Добавить в календарь",
+  "maxParticipantsLabel": "Максимум",
+  "applicantsForParticipationLabel": "Заявок",
+  "unlimitedLabel": "Без ограничения"
 }

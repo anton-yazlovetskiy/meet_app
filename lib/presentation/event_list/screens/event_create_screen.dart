@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
-import '../../domain/entities/index.dart';
-import '../../domain/usecases/index.dart';
+import '../../../domain/entities/index.dart';
+import '../../../domain/repositories/index.dart';
+import '../../../domain/usecases/index.dart';
 
 @RoutePage()
 class EventCreatePage extends StatefulWidget {
@@ -16,6 +17,7 @@ class EventCreatePage extends StatefulWidget {
 
 class _EventCreatePageState extends State<EventCreatePage> {
   final _createEventUseCase = GetIt.instance<CreateEventUseCase>();
+  final _authRepository = GetIt.instance<AuthRepository>();
   final _formKey = GlobalKey<FormState>();
 
   // Form fields
@@ -31,6 +33,31 @@ class _EventCreatePageState extends State<EventCreatePage> {
   bool _isPublic = true;
   EventType _eventType = EventType.voting;
   bool _isLoading = false;
+  String? _selectedCity;
+  String _currentUserId = 'user_1';
+
+  static const List<String> _cityPool = [
+    'Москва',
+    'Санкт-Петербург',
+    'Казань',
+    'Екатеринбург',
+    'Новосибирск',
+    'Нижний Новгород',
+    'Краснодар',
+    'Самара',
+    'Ростов-на-Дону',
+    'Уфа',
+    'Пермь',
+    'Сочи',
+    'Калининград',
+    'Воронеж',
+    'Волгоград',
+    'Тюмень',
+    'Омск',
+    'Челябинск',
+    'Красноярск',
+    'Владивосток',
+  ];
 
   @override
   void initState() {
@@ -41,6 +68,21 @@ class _EventCreatePageState extends State<EventCreatePage> {
     _maxParticipantsController = TextEditingController();
     _priceController = TextEditingController(text: '0');
     _selectedStartDate = DateTime.now().add(const Duration(days: 7));
+    _selectedCity = _cityPool.first;
+    _initCurrentUser();
+  }
+
+  Future<void> _initCurrentUser() async {
+    final user = await _authRepository.getCurrentUser();
+    if (!mounted || user == null) {
+      return;
+    }
+    setState(() {
+      _currentUserId = user.id;
+      if (user.city != null && user.city!.trim().isNotEmpty) {
+        _selectedCity = user.city!.trim();
+      }
+    });
   }
 
   @override
@@ -79,6 +121,7 @@ class _EventCreatePageState extends State<EventCreatePage> {
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (pickedStart == null) return;
+    if (!context.mounted) return;
 
     final pickedEnd = await showDatePicker(
       context: context,
@@ -88,6 +131,7 @@ class _EventCreatePageState extends State<EventCreatePage> {
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (pickedEnd == null) return;
+    if (!context.mounted) return;
 
     setState(() {
       _selectedVotingStart = pickedStart;
@@ -131,10 +175,11 @@ class _EventCreatePageState extends State<EventCreatePage> {
           title: _titleController.text,
           description: _descriptionController.text,
           tags: tags,
-          location: const Location(
+          location: Location(
             lat: 55.7558,
             lng: 37.6173,
             mapLink: 'https://maps.google.com/?q=55.7558,37.6173',
+            address: '${_selectedCity ?? 'Москва'}, Центр города',
           ),
           isPublic: _isPublic,
           eventType: _eventType,
@@ -148,7 +193,7 @@ class _EventCreatePageState extends State<EventCreatePage> {
                 )
               : null,
           unAvailableSlots: [],
-          userId: 'user_1',
+          userId: _currentUserId,
         ),
       );
 
@@ -169,6 +214,68 @@ class _EventCreatePageState extends State<EventCreatePage> {
   String _formatDate(DateTime? date) {
     if (date == null) return 'Не выбрана';
     return DateFormat('dd.MM.yyyy').format(date);
+  }
+
+  Future<void> _showCityPicker() async {
+    final cities = <String>{..._cityPool};
+    if (_selectedCity != null && _selectedCity!.trim().isNotEmpty) {
+      cities.add(_selectedCity!.trim());
+    }
+    final cityItems = cities.toList()..sort();
+    final searchController = TextEditingController();
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        var filtered = [...cityItems];
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Поиск города',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                    onChanged: (value) {
+                      final query = value.trim().toLowerCase();
+                      setModalState(() {
+                        filtered = cityItems
+                            .where(
+                              (city) => city.toLowerCase().contains(query),
+                            )
+                            .toList(growable: false);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filtered.length,
+                      itemBuilder: (context, index) {
+                        final city = filtered[index];
+                        return ListTile(
+                          selected: _selectedCity == city,
+                          title: Text(city),
+                          onTap: () {
+                            setState(() => _selectedCity = city);
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+    searchController.dispose();
   }
 
   @override
@@ -268,6 +375,14 @@ class _EventCreatePageState extends State<EventCreatePage> {
                       onTap: () => _selectVotingDates(context),
                       contentPadding: EdgeInsets.zero,
                     ),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    title: const Text('Город'),
+                    subtitle: Text(_selectedCity ?? 'Не выбран'),
+                    trailing: const Icon(Icons.location_city),
+                    onTap: _showCityPicker,
+                    contentPadding: EdgeInsets.zero,
+                  ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _maxParticipantsController,

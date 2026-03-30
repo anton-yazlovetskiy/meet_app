@@ -1,60 +1,651 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../models/event_feed_item.dart';
+import '../models/event_list_filter.dart';
 import 'vote_list_widget.dart';
 import 'vote_table_widget.dart';
 
-class EventFeedCardLabels {
-  final String join;
-  final String leave;
-  final String noPhoto;
-  final String table;
-  final String list;
-  final String topSlots;
-  final String address;
-  final String dayLabel;
-  final List<String> weekdays;
-  final String tagMismatch;
+class EventFeedCardSidePanelState {
+  final bool showActions;
+  final bool isChatActive;
+  final bool isParticipantsActive;
 
-  const EventFeedCardLabels({
-    required this.join,
-    required this.leave,
-    required this.noPhoto,
-    required this.table,
-    required this.list,
-    required this.topSlots,
-    required this.address,
-    required this.dayLabel,
-    required this.weekdays,
-    required this.tagMismatch,
+  const EventFeedCardSidePanelState({
+    required this.showActions,
+    required this.isChatActive,
+    required this.isParticipantsActive,
   });
 }
 
-class EventFeedCard extends StatefulWidget {
-  final EventFeedItem item;
-  final EventFeedCardLabels labels;
-  final Color accentColor;
-  final ValueChanged<bool> onParticipationChanged;
+class EventFeedCardVoteActions {
+  final ValueChanged<EventVoteViewMode> onVoteModeChanged;
+  final VoidCallback onPreviousWeek;
+  final VoidCallback onNextWeek;
+  final VoidCallback onShowAfternoonHours;
+  final VoidCallback onShowMorningHours;
+  final ValueChanged<int> onSelectListDay;
+  final ValueChanged<String> onToggleSlot;
+  final ValueChanged<int> onToggleHourBatch;
+  final ValueChanged<int> onToggleDayBatch;
+
+  const EventFeedCardVoteActions({
+    required this.onVoteModeChanged,
+    required this.onPreviousWeek,
+    required this.onNextWeek,
+    required this.onShowAfternoonHours,
+    required this.onShowMorningHours,
+    required this.onSelectListDay,
+    required this.onToggleSlot,
+    required this.onToggleHourBatch,
+    required this.onToggleDayBatch,
+  });
+}
+
+class EventFeedCardActions {
+  final VoidCallback onToggleParticipation;
+  final VoidCallback onToggleExpanded;
   final VoidCallback onOpenChat;
   final VoidCallback onOpenParticipants;
+  final EventFeedCardVoteActions vote;
+
+  const EventFeedCardActions({
+    required this.onToggleParticipation,
+    required this.onToggleExpanded,
+    required this.onOpenChat,
+    required this.onOpenParticipants,
+    required this.vote,
+  });
+}
+
+class EventFeedCard extends StatelessWidget {
+  final EventFeedItem item;
+  final Locale locale;
+  final double headerHeight;
+  final EventFeedCardSidePanelState sidePanelState;
+  final EventFeedCardActions actions;
 
   const EventFeedCard({
     super.key,
     required this.item,
-    required this.labels,
-    required this.accentColor,
-    required this.onParticipationChanged,
-    required this.onOpenChat,
-    required this.onOpenParticipants,
+    required this.locale,
+    required this.headerHeight,
+    required this.sidePanelState,
+    required this.actions,
   });
 
   @override
-  State<EventFeedCard> createState() => _EventFeedCardState();
-}
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final weekStart = _weekStart(
+      item.startDate,
+    ).add(Duration(days: item.weekOffset * 7));
+    final startHour = item.hourOffset;
+    final optimisticParticipantCount =
+        item.event.participants.length +
+        ((item.isParticipant &&
+                item.relation != EventRelationKind.participating)
+            ? 1
+            : (!item.isParticipant &&
+                  item.relation == EventRelationKind.participating)
+            ? -1
+            : 0);
+    final fixedCapacityLabel = item.maxParticipants == null
+        ? '$optimisticParticipantCount'
+        : '$optimisticParticipantCount/${item.maxParticipants}';
+    final optimisticApplicantsCount =
+        item.event.applicants.length +
+        ((item.selectedSlotIds.isNotEmpty || item.appliedSlotIds.isNotEmpty) &&
+                item.relation != EventRelationKind.applied
+            ? 1
+            : 0);
 
-class _EventFeedCardState extends State<EventFeedCard> {
-  bool _hovered = false;
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          _buildHeader(
+            context,
+            l10n: l10n,
+            colorScheme: colorScheme,
+            fixedCapacityLabel: fixedCapacityLabel,
+            optimisticApplicantsCount: optimisticApplicantsCount,
+          ),
+          if (item.isVoting)
+            _buildVotingExpansion(
+              context,
+              l10n: l10n,
+              colorScheme: colorScheme,
+              weekStart: weekStart,
+              startHour: startHour,
+            ),
+          if (!item.isVoting)
+            _buildFixedParticipationBar(
+              context,
+              l10n: l10n,
+              colorScheme: colorScheme,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required String fixedCapacityLabel,
+    required int optimisticApplicantsCount,
+  }) {
+    return SizedBox(
+      height: headerHeight,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            width: 2,
+            margin: const EdgeInsets.only(top: 1, bottom: 1),
+            decoration: BoxDecoration(
+              color: _relationColor(item.relation, colorScheme),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+              ),
+            ),
+          ),
+          Expanded(child: _ImageAndTags(item: item)),
+          Expanded(
+            flex: 2,
+            child: _buildMainInfo(
+              context,
+              l10n: l10n,
+              colorScheme: colorScheme,
+              fixedCapacityLabel: fixedCapacityLabel,
+              optimisticApplicantsCount: optimisticApplicantsCount,
+            ),
+          ),
+          _buildRightRail(context, l10n: l10n, colorScheme: colorScheme),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVotingExpansion(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required DateTime weekStart,
+    required int startHour,
+  }) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        key: PageStorageKey<String>('vote-expansion-${item.id}'),
+        initiallyExpanded: item.isExpanded,
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: EdgeInsets.zero,
+        trailing: const SizedBox.shrink(),
+        onExpansionChanged: (expanded) {
+          if (expanded != item.isExpanded) {
+            actions.onToggleExpanded();
+          }
+        },
+        title: Container(
+          height: 34,
+          alignment: Alignment.center,
+          child: Icon(
+            item.isExpanded
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down,
+          ),
+        ),
+        children: [
+          _buildVotingPanel(
+            context,
+            l10n: l10n,
+            colorScheme: colorScheme,
+            weekStart: weekStart,
+            startHour: startHour,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainInfo(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required String fixedCapacityLabel,
+    required int optimisticApplicantsCount,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  item.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      Theme.of(
+                        context,
+                      ).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+              if (item.price > 0) _buildPricePill(context, colorScheme),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            item.description,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 8),
+          _buildAddress(context, l10n: l10n, colorScheme: colorScheme),
+          const SizedBox(height: 8),
+          _buildMetaBlock(
+            context,
+            l10n: l10n,
+            colorScheme: colorScheme,
+            fixedCapacityLabel: fixedCapacityLabel,
+            optimisticApplicantsCount: optimisticApplicantsCount,
+          ),
+          if (item.isVoting) ...[
+            const SizedBox(height: 8),
+            _buildTopSlotsRow(context, l10n: l10n, colorScheme: colorScheme),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopSlotsRow(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+  }) {
+    final topSlots =
+        item.slots
+            .where((slot) => slot.isAvailable && slot.votes > 0)
+            .toList(growable: false)
+          ..sort((a, b) => b.votes.compareTo(a.votes));
+    final visible = topSlots.take(3).toList(growable: false);
+
+    if (visible.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      height: 30,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: visible.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 6),
+        itemBuilder: (context, index) {
+          final slot = visible[index];
+          final selected = item.selectedSlotIds.contains(slot.id);
+          return InkWell(
+            onTap: () => actions.vote.onToggleSlot(slot.id),
+            borderRadius: BorderRadius.circular(999),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                color: selected
+                    ? colorScheme.primaryContainer
+                    : colorScheme.surfaceContainerHigh,
+                border: Border.all(
+                  color: selected
+                      ? colorScheme.primary
+                      : colorScheme.outlineVariant,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _formatShortDayDate(slot.dateTime),
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPricePill(BuildContext context, ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.only(left: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: colorScheme.tertiaryContainer,
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.local_activity_outlined, size: 14),
+          const SizedBox(width: 4),
+          Text(
+            '${item.price.toStringAsFixed(0)} ₽',
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddress(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+  }) {
+    return InkWell(
+      onTap: () => _openMap(item.mapUrl),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: colorScheme.surfaceContainerHigh,
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.location_on_outlined, size: 16),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                '${l10n.addressLabel}: ${item.address.isEmpty ? '-' : item.address}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetaBlock(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required String fixedCapacityLabel,
+    required int optimisticApplicantsCount,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: colorScheme.surfaceContainerHighest,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (item.isVoting) ...[
+            Text(
+              '${l10n.maxParticipantsLabel}: ${_formatMaxParticipantsLabel(l10n)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '${l10n.applicantsForParticipationLabel}: $optimisticApplicantsCount',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          ] else
+            Text(
+              fixedCapacityLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          if (!item.isVoting) ...[
+            const SizedBox(height: 2),
+            Text(
+              _formatShortDayDate(item.startDate),
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRightRail(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+  }) {
+    return SizedBox(
+      width: 96,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 260),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeIn,
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 260),
+                curve: Curves.easeOutCubic,
+                offset: sidePanelState.showActions
+                    ? Offset.zero
+                    : const Offset(0.4, 0),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 220),
+                  opacity: sidePanelState.showActions ? 1 : 0,
+                  child: sidePanelState.showActions
+                      ? Column(
+                          key: const ValueKey('side_actions_visible'),
+                          children: [
+                            _SideActionButton(
+                              icon: Icons.chat_bubble_outline,
+                              tooltip: l10n.messageLabel,
+                              onTap: actions.onOpenChat,
+                              active: sidePanelState.isChatActive,
+                            ),
+                            const SizedBox(height: 6),
+                            _SideActionButton(
+                              icon: Icons.groups_outlined,
+                              tooltip: l10n.participants,
+                              onTap: actions.onOpenParticipants,
+                              active: sidePanelState.isParticipantsActive,
+                            ),
+                          ],
+                        )
+                      : const SizedBox(
+                          key: ValueKey('side_actions_hidden'),
+                          height: 34,
+                        ),
+                ),
+              ),
+            ),
+            const Spacer(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFixedParticipationBar(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+  }) {
+    return InkWell(
+      onTap: actions.onToggleParticipation,
+      child: Container(
+        height: 38,
+        width: double.infinity,
+        alignment: Alignment.center,
+        color: colorScheme.surfaceContainerHighest,
+        child: Text(
+          item.isParticipant ? l10n.leaveEvent : l10n.joinEvent,
+          style: Theme.of(
+            context,
+          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVotingPanel(
+    BuildContext context, {
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required DateTime weekStart,
+    required int startHour,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      child: Column(
+        children: [
+          _buildVoteModeToggle(l10n, colorScheme),
+          const SizedBox(height: 10),
+          item.voteViewMode == EventVoteViewMode.table
+              ? VoteTableWidget(
+                  localeCode: locale.languageCode,
+                  weekStart: weekStart,
+                  startHour: startHour,
+                  slots: item.slots,
+                  selectedSlotIds: item.selectedSlotIds,
+                  onPreviousWeek: actions.vote.onPreviousWeek,
+                  onNextWeek: actions.vote.onNextWeek,
+                  onShowAfternoonHours: actions.vote.onShowAfternoonHours,
+                  onShowMorningHours: actions.vote.onShowMorningHours,
+                  onSlotTap: actions.vote.onToggleSlot,
+                  onHourTap: actions.vote.onToggleHourBatch,
+                  onDayTap: actions.vote.onToggleDayBatch,
+                )
+              : VoteListWidget(
+                  localeCode: locale.languageCode,
+                  weekStart: weekStart,
+                  startHour: startHour,
+                  slots: item.slots,
+                  selectedSlotIds: item.selectedSlotIds,
+                  selectedDayIndex: item.selectedDayIndex,
+                  onSelectDay: actions.vote.onSelectListDay,
+                  onToggleSlot: actions.vote.onToggleSlot,
+                  onPreviousWeek: actions.vote.onPreviousWeek,
+                  onNextWeek: actions.vote.onNextWeek,
+                  onShowAfternoonHours: actions.vote.onShowAfternoonHours,
+                  onShowMorningHours: actions.vote.onShowMorningHours,
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVoteModeToggle(AppLocalizations l10n, ColorScheme colorScheme) {
+    return Row(
+      children: [
+        Expanded(
+          child: InkWell(
+            onTap: () =>
+                actions.vote.onVoteModeChanged(EventVoteViewMode.table),
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              height: 34,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: item.voteViewMode == EventVoteViewMode.table
+                    ? colorScheme.primaryContainer
+                    : colorScheme.surfaceContainerHighest,
+              ),
+              child: Text(l10n.tableLabel),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: InkWell(
+            onTap: () => actions.vote.onVoteModeChanged(EventVoteViewMode.list),
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              height: 34,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: item.voteViewMode == EventVoteViewMode.list
+                    ? colorScheme.primaryContainer
+                    : colorScheme.surfaceContainerHighest,
+              ),
+              child: Text(l10n.listLabel),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatShortDayDate(DateTime date) {
+    final raw = DateFormat(
+      'EEE d MMM',
+      locale.languageCode,
+    ).format(date).replaceAll('.', '').replaceAll(',', '').trim();
+    if (raw.isEmpty) {
+      return raw;
+    }
+    return '${raw[0].toUpperCase()}${raw.substring(1)}';
+  }
+
+  String _formatMaxParticipantsLabel(AppLocalizations l10n) {
+    final max = item.maxParticipants;
+    if (max == null) {
+      return l10n.unlimitedLabel;
+    }
+
+    if (locale.languageCode == 'ru') {
+      return '$max чел.';
+    }
+    return '$max ppl.';
+  }
+
+  Color _relationColor(EventRelationKind relation, ColorScheme colorScheme) {
+    return switch (relation) {
+      EventRelationKind.mine => const Color(0xFFD95A66),
+      EventRelationKind.participating => const Color(0xFF42A86A),
+      EventRelationKind.applied => const Color(0xFF4E88E7),
+      EventRelationKind.none => colorScheme.outlineVariant,
+    };
+  }
+
+  DateTime _weekStart(DateTime date) {
+    final weekday = date.weekday;
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+    ).subtract(Duration(days: weekday - 1));
+  }
 
   Future<void> _openMap(String url) async {
     final uri = Uri.tryParse(url);
@@ -63,498 +654,133 @@ class _EventFeedCardState extends State<EventFeedCard> {
     }
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final item = widget.item;
-
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        transform: Matrix4.translationValues(0, _hovered ? -3 : 0, 0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: widget.accentColor.withValues(alpha: 0.55),
-            width: 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: _hovered ? 0.05 : 0.02),
-              blurRadius: _hovered ? 5 : 2,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: Card(
-            elevation: 0,
-            margin: EdgeInsets.zero,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item.title,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          if (item.ticketPrice != null)
-                            _TicketBadge(price: item.ticketPrice!),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 210,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: _PhotoBlock(
-                                imageUrl: item.imageUrl,
-                                noPhotoLabel: widget.labels.noPhoto,
-                                tags: item.tags.take(3).toList(),
-                                tagMismatchLabel: widget.labels.tagMismatch,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              flex: 3,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  InkWell(
-                                    onTap: () => _openMap(item.mapUrl),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.surfaceContainerHigh,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.location_on_outlined,
-                                            size: 18,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Expanded(
-                                            child: Text(
-                                              '${widget.labels.address}: ${item.address}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  if (item.isVoting)
-                                    SizedBox(
-                                      height: 36,
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children: item.topSlots
-                                              .take(3)
-                                              .map(
-                                                (slot) => Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        right: 6,
-                                                      ),
-                                                  child: ActionChip(
-                                                    label: Text(
-                                                      '${slot.votes} • ${slot.label}',
-                                                    ),
-                                                    onPressed: () {},
-                                                    visualDensity:
-                                                        VisualDensity.compact,
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                      ),
-                                    )
-                                  else
-                                    const Spacer(),
-                                  const Spacer(),
-                                  Row(
-                                    children: [
-                                      Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            child: Text(
-                                              item.title.substring(0, 1),
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            right: -22,
-                                            bottom: -2,
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 6,
-                                                    vertical: 2,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
-                                                borderRadius:
-                                                    BorderRadius.circular(999),
-                                                border: Border.all(
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).colorScheme.surface,
-                                                  width: 1.5,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                '★ ${item.authorRating.toStringAsFixed(1)}',
-                                                style: TextStyle(
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).colorScheme.onPrimary,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 11,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const Spacer(),
-                                      IconButton(
-                                        onPressed: item.isParticipant
-                                            ? widget.onOpenChat
-                                            : null,
-                                        icon: const Icon(
-                                          Icons.chat_bubble_outline,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: item.isParticipant
-                                            ? widget.onOpenParticipants
-                                            : null,
-                                        icon: const Icon(
-                                          Icons.groups_2_outlined,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(
-                                          999,
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            if (item.isLiked) {
-                                              item.isLiked = false;
-                                              item.likes = (item.likes - 1)
-                                                  .clamp(0, 99999);
-                                            } else {
-                                              item.isLiked = true;
-                                              item.likes += 1;
-                                              if (item.isDisliked) {
-                                                item.isDisliked = false;
-                                                item.dislikes =
-                                                    (item.dislikes - 1).clamp(
-                                                      0,
-                                                      99999,
-                                                    );
-                                              }
-                                            }
-                                          });
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              item.isLiked
-                                                  ? Icons.thumb_up
-                                                  : Icons.thumb_up_outlined,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text('${item.likes}'),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(
-                                          999,
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            if (item.isDisliked) {
-                                              item.isDisliked = false;
-                                              item.dislikes =
-                                                  (item.dislikes - 1).clamp(
-                                                    0,
-                                                    99999,
-                                                  );
-                                            } else {
-                                              item.isDisliked = true;
-                                              item.dislikes += 1;
-                                              if (item.isLiked) {
-                                                item.isLiked = false;
-                                                item.likes = (item.likes - 1)
-                                                    .clamp(0, 99999);
-                                              }
-                                            }
-                                          });
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              item.isDisliked
-                                                  ? Icons.thumb_down
-                                                  : Icons.thumb_down_outlined,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text('${item.dislikes}'),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (item.isVoting)
-                  InkWell(
-                    onTap: () =>
-                        setState(() => item.isExpanded = !item.isExpanded),
-                    child: Container(
-                      height: 34,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                      child: Icon(
-                        item.isExpanded
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                      ),
-                    ),
-                  ),
-                if (!item.isVoting)
-                  SizedBox(
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                      child: FilledButton(
-                        onPressed: () {
-                          item.isParticipant = !item.isParticipant;
-                          widget.onParticipationChanged(item.isParticipant);
-                          setState(() {});
-                        },
-                        child: Text(
-                          item.isParticipant
-                              ? widget.labels.leave
-                              : widget.labels.join,
-                        ),
-                      ),
-                    ),
-                  ),
-                if (item.isVoting && item.isExpanded)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(999),
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () =>
-                                      setState(() => item.useTableView = true),
-                                  child: Text(widget.labels.table),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () =>
-                                      setState(() => item.useTableView = false),
-                                  child: Text(widget.labels.list),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        item.useTableView
-                            ? VoteTableWidget(weekdays: widget.labels.weekdays)
-                            : VoteListWidget(dayLabel: widget.labels.dayLabel),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
-class _PhotoBlock extends StatelessWidget {
-  final String? imageUrl;
-  final String noPhotoLabel;
-  final List<String> tags;
-  final String tagMismatchLabel;
+class _SideActionButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  final bool active;
 
-  const _PhotoBlock({
-    required this.imageUrl,
-    required this.noPhotoLabel,
-    required this.tags,
-    required this.tagMismatchLabel,
+  const _SideActionButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+    this.active = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          if (imageUrl == null)
-            Container(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              alignment: Alignment.center,
-              child: Text(noPhotoLabel),
-            )
-          else
-            Image.network(
-              imageUrl!,
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.low,
-              cacheWidth: 420,
-              errorBuilder: (_, _, _) => Container(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                alignment: Alignment.center,
-                child: Text(noPhotoLabel),
-              ),
-            ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(6),
-              color: Colors.black.withValues(alpha: 0.24),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: tags
-                    .map(
-                      (tag) => PopupMenuButton<String>(
-                        padding: EdgeInsets.zero,
-                        onSelected: (_) {},
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'mismatch',
-                            child: Text(tagMismatchLabel),
-                          ),
-                        ],
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(999),
-                            color: Colors.black.withValues(alpha: 0.26),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.38),
-                            ),
-                          ),
-                          child: Text(
-                            tag,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 34,
+          width: 34,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: active
+                ? Theme.of(context).colorScheme.primaryContainer
+                : Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
-        ],
+          child: Icon(icon, size: 18),
+        ),
       ),
     );
   }
 }
 
-class _TicketBadge extends StatelessWidget {
-  final double price;
+class _ImageAndTags extends StatelessWidget {
+  final EventFeedItem item;
 
-  const _TicketBadge({required this.price});
+  const _ImageAndTags({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).colorScheme.tertiaryContainer,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.4),
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (item.imageUrl == null)
+              Container(
+                color: colorScheme.surfaceContainerHighest,
+                alignment: Alignment.center,
+                child: Text(AppLocalizations.of(context)!.noPhotoLabel),
+              )
+            else
+              Image.network(
+                item.imageUrl!,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.low,
+                errorBuilder: (_, _, _) => Container(
+                  color: colorScheme.surfaceContainerHighest,
+                  alignment: Alignment.center,
+                  child: Text(AppLocalizations.of(context)!.noPhotoLabel),
+                ),
+              ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                width: 120,
+                padding: const EdgeInsets.all(6),
+                color: colorScheme.scrim.withValues(alpha: 0.25),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: item.tags
+                      .take(4)
+                      .map(
+                        (tag) => Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: PopupMenuButton<String>(
+                            padding: EdgeInsets.zero,
+                            onSelected: (_) {},
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'mismatch',
+                                child: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.tagMismatchLabel,
+                                ),
+                              ),
+                            ],
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: colorScheme.surface.withValues(
+                                  alpha: 0.85,
+                                ),
+                              ),
+                              child: Text(
+                                tag,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.local_activity_outlined, size: 15),
-          const SizedBox(width: 5),
-          Text('${price.toStringAsFixed(0)} ₽'),
-        ],
       ),
     );
   }

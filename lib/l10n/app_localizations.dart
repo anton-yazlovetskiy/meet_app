@@ -811,6 +811,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expand'**
   String get expandLabel;
+
+  /// No description provided for @applicationSubmittedShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Application submitted'**
+  String get applicationSubmittedShort;
+
+  /// No description provided for @applicationCancelledShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Application withdrawn'**
+  String get applicationCancelledShort;
+
+  /// No description provided for @addToCalendarLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to calendar'**
+  String get addToCalendarLabel;
+
+  /// No description provided for @maxParticipantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum'**
+  String get maxParticipantsLabel;
+
+  /// No description provided for @applicantsForParticipationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get applicantsForParticipationLabel;
+
+  /// No description provided for @unlimitedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get unlimitedLabel;
 }
 
 class _AppLocalizationsDelegate

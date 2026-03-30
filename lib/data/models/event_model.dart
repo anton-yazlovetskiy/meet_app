@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import '../../domain/index.dart';
 
 part 'event_model.g.dart';
 
-class LocationConverter implements JsonConverter<Location, Map<String, dynamic>> {
+class LocationConverter
+    implements JsonConverter<Location, Map<String, dynamic>> {
   const LocationConverter();
 
   @override
@@ -13,11 +15,17 @@ class LocationConverter implements JsonConverter<Location, Map<String, dynamic>>
 
   @override
   Map<String, dynamic> toJson(Location object) {
-    return LocationModel(lat: object.lat, lng: object.lng, mapLink: object.mapLink).toJson();
+    return LocationModel(
+      lat: object.lat,
+      lng: object.lng,
+      mapLink: object.mapLink,
+      address: object.address,
+    ).toJson();
   }
 }
 
-class DateRangeConverter implements JsonConverter<DateRange?, Map<String, dynamic>?> {
+class DateRangeConverter
+    implements JsonConverter<DateRange?, Map<String, dynamic>?> {
   const DateRangeConverter();
 
   @override
@@ -33,7 +41,8 @@ class DateRangeConverter implements JsonConverter<DateRange?, Map<String, dynami
   }
 }
 
-class SlotStatsConverter implements JsonConverter<SlotStats, Map<String, dynamic>> {
+class SlotStatsConverter
+    implements JsonConverter<SlotStats, Map<String, dynamic>> {
   const SlotStatsConverter();
 
   @override
@@ -43,11 +52,16 @@ class SlotStatsConverter implements JsonConverter<SlotStats, Map<String, dynamic
 
   @override
   Map<String, dynamic> toJson(SlotStats object) {
-    return SlotStatsModel(slotId: object.slotId, votes: object.votes, voters: object.voters).toJson();
+    return SlotStatsModel(
+      slotId: object.slotId,
+      votes: object.votes,
+      voters: object.voters,
+    ).toJson();
   }
 }
 
-class ExpenseSummaryConverter implements JsonConverter<ExpenseSummary, Map<String, dynamic>> {
+class ExpenseSummaryConverter
+    implements JsonConverter<ExpenseSummary, Map<String, dynamic>> {
   const ExpenseSummaryConverter();
 
   @override
@@ -57,20 +71,59 @@ class ExpenseSummaryConverter implements JsonConverter<ExpenseSummary, Map<Strin
 
   @override
   Map<String, dynamic> toJson(ExpenseSummary object) {
-    return ExpenseSummaryModel(total: object.total, receiptCount: object.receiptCount).toJson();
+    return ExpenseSummaryModel(
+      total: object.total,
+      receiptCount: object.receiptCount,
+    ).toJson();
   }
 }
 
 @JsonSerializable()
 class LocationModel extends Location {
-  LocationModel({required super.lat, required super.lng, required super.mapLink});
+  LocationModel({
+    required super.lat,
+    required super.lng,
+    required super.mapLink,
+    super.address,
+  });
 
-  factory LocationModel.fromJson(Map<String, dynamic> json) => _$LocationModelFromJson(json);
+  factory LocationModel.fromJson(Map<String, dynamic> json) {
+    final latRaw = json['lat'] ?? json['latitude'];
+    final lngRaw = json['lng'] ?? json['longitude'];
+    final lat = latRaw is num ? latRaw.toDouble() : null;
+    final lng = lngRaw is num ? lngRaw.toDouble() : null;
 
-  Map<String, dynamic> toJson() => _$LocationModelToJson(this);
+    final mapLinkValue = json['mapLink']?.toString();
+    final mapLink = (mapLinkValue != null && mapLinkValue.isNotEmpty)
+        ? mapLinkValue
+        : (lat != null && lng != null)
+        ? 'https://maps.google.com/?q=$lat,$lng'
+        : '';
+
+    final address = json['address']?.toString() ?? json['name']?.toString();
+
+    return LocationModel(
+      lat: lat,
+      lng: lng,
+      mapLink: mapLink,
+      address: address,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'lat': lat,
+    'lng': lng,
+    'mapLink': mapLink,
+    'address': address,
+  };
 
   factory LocationModel.fromEntity(Location location) {
-    return LocationModel(lat: location.lat, lng: location.lng, mapLink: location.mapLink);
+    return LocationModel(
+      lat: location.lat,
+      lng: location.lng,
+      mapLink: location.mapLink,
+      address: location.address,
+    );
   }
 }
 
@@ -78,7 +131,8 @@ class LocationModel extends Location {
 class DateRangeModel extends DateRange {
   DateRangeModel({required super.start, required super.end});
 
-  factory DateRangeModel.fromJson(Map<String, dynamic> json) => _$DateRangeModelFromJson(json);
+  factory DateRangeModel.fromJson(Map<String, dynamic> json) =>
+      _$DateRangeModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$DateRangeModelToJson(this);
 
@@ -89,14 +143,23 @@ class DateRangeModel extends DateRange {
 
 @JsonSerializable()
 class SlotStatsModel extends SlotStats {
-  SlotStatsModel({required super.slotId, required super.votes, required super.voters});
+  SlotStatsModel({
+    required super.slotId,
+    required super.votes,
+    required super.voters,
+  });
 
-  factory SlotStatsModel.fromJson(Map<String, dynamic> json) => _$SlotStatsModelFromJson(json);
+  factory SlotStatsModel.fromJson(Map<String, dynamic> json) =>
+      _$SlotStatsModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SlotStatsModelToJson(this);
 
   factory SlotStatsModel.fromEntity(SlotStats slotStats) {
-    return SlotStatsModel(slotId: slotStats.slotId, votes: slotStats.votes, voters: slotStats.voters);
+    return SlotStatsModel(
+      slotId: slotStats.slotId,
+      votes: slotStats.votes,
+      voters: slotStats.voters,
+    );
   }
 }
 
@@ -104,12 +167,16 @@ class SlotStatsModel extends SlotStats {
 class ExpenseSummaryModel extends ExpenseSummary {
   ExpenseSummaryModel({required super.total, required super.receiptCount});
 
-  factory ExpenseSummaryModel.fromJson(Map<String, dynamic> json) => _$ExpenseSummaryModelFromJson(json);
+  factory ExpenseSummaryModel.fromJson(Map<String, dynamic> json) =>
+      _$ExpenseSummaryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ExpenseSummaryModelToJson(this);
 
   factory ExpenseSummaryModel.fromEntity(ExpenseSummary summary) {
-    return ExpenseSummaryModel(total: summary.total, receiptCount: summary.receiptCount);
+    return ExpenseSummaryModel(
+      total: summary.total,
+      receiptCount: summary.receiptCount,
+    );
   }
 }
 
@@ -140,42 +207,95 @@ class EventModel extends Event {
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
+    final createdAtRaw = json['createdAt']?.toString();
+    final createdAt =
+        (createdAtRaw != null ? DateTime.tryParse(createdAtRaw) : null) ??
+        DateTime.now();
+    final startLimitRaw = json['startLimit']?.toString();
+    final startLimit =
+        (startLimitRaw != null ? DateTime.tryParse(startLimitRaw) : null) ??
+        createdAt.add(const Duration(days: 30));
+    final votingId = json['votingId']?.toString();
+
     return EventModel(
       id: json['id']?.toString() ?? 'unknown',
       title: json['title']?.toString() ?? 'No title',
       description: json['description']?.toString() ?? 'No description',
       tags: json['tags'] is List ? List<String>.from(json['tags']) : [],
-      location: json['location'] is Map<String, dynamic> ? LocationModel.fromJson(json['location']) : LocationModel(lat: 0, lng: 0, mapLink: ''),
+      location: json['location'] is Map<String, dynamic>
+          ? LocationModel.fromJson(json['location'])
+          : LocationModel(lat: 0, lng: 0, mapLink: ''),
       isPublic: json['isPublic'] is bool ? json['isPublic'] : true,
-      eventType: json['eventType'] is String ? EventType.values.byName(json['eventType']) : EventType.fixed,
-      creatorId: json['creatorId']?.toString() ?? 'unknown',
-      managers: json['managers'] is List ? List<String>.from(json['managers']) : [],
-      maxParticipants: json['maxParticipants'] is int ? json['maxParticipants'] : null,
+      eventType: json['eventType'] is String
+          ? EventType.values.byName(json['eventType'])
+          : (votingId != null && votingId.isNotEmpty)
+          ? EventType.voting
+          : EventType.fixed,
+      creatorId:
+          json['creatorId']?.toString() ??
+          json['organizerId']?.toString() ??
+          'unknown',
+      managers: json['managers'] is List
+          ? List<String>.from(json['managers'])
+          : [],
+      maxParticipants: json['maxParticipants'] is int
+          ? json['maxParticipants']
+          : null,
       price: json['price'] is num ? json['price'].toDouble() : 0.0,
-      createdAt: json['createdAt'] is String ? DateTime.tryParse(json['createdAt']) ?? DateTime.now() : DateTime.now(),
-      startLimit: json['startLimit'] is String ? DateTime.tryParse(json['startLimit']) ?? DateTime.now().add(const Duration(days: 30)) : DateTime.now().add(const Duration(days: 30)),
-      status: json['status'] is String ? EventStatus.values.byName(json['status']) : EventStatus.planned,
-      votingPeriod: json['votingPeriod'] is Map<String, dynamic> ? DateRangeModel.fromJson(json['votingPeriod']) : null,
+      createdAt: createdAt,
+      startLimit: startLimit,
+      status: json['status'] is String
+          ? EventStatus.values.byName(json['status'])
+          : EventStatus.planned,
+      votingPeriod: json['votingPeriod'] is Map<String, dynamic>
+          ? DateRangeModel.fromJson(json['votingPeriod'])
+          : null,
       finalSlotId: json['finalSlotId']?.toString(),
-      participants: json['participants'] is List ? List<String>.from(json['participants']) : [],
-      applicants: json['applicants'] is List ? List<String>.from(json['applicants']) : [],
+      participants: json['participants'] is List
+          ? List<String>.from(json['participants'])
+          : [],
+      applicants: json['applicants'] is List
+          ? List<String>.from(json['applicants'])
+          : [],
       slotStats: json['slotStats'] is List
-          ? json['slotStats'].map<SlotStatsModel>((e) => e is Map<String, dynamic> ? SlotStatsModel.fromJson(e) : SlotStatsModel(slotId: 'unknown', votes: 0, voters: [])).toList()
+          ? json['slotStats']
+                .map<SlotStatsModel>(
+                  (e) => e is Map<String, dynamic>
+                      ? SlotStatsModel.fromJson(e)
+                      : SlotStatsModel(slotId: 'unknown', votes: 0, voters: []),
+                )
+                .toList()
           : [],
       chatId: json['chatId']?.toString() ?? 'default_chat',
-      expenseSummary: json['expenseSummary'] is Map<String, dynamic> ? ExpenseSummaryModel.fromJson(json['expenseSummary']) : ExpenseSummaryModel(total: 0, receiptCount: 0),
+      expenseSummary: json['expenseSummary'] is Map<String, dynamic>
+          ? ExpenseSummaryModel.fromJson(json['expenseSummary'])
+          : ExpenseSummaryModel(total: 0, receiptCount: 0),
       isArchived: json['isArchived'] is bool ? json['isArchived'] : false,
     );
   }
 
   Map<String, dynamic> toJson() {
-    final locationMap = location is LocationModel ? (location as LocationModel).toJson() : LocationModel.fromEntity(location).toJson();
+    final locationMap = location is LocationModel
+        ? (location as LocationModel).toJson()
+        : LocationModel.fromEntity(location).toJson();
 
-    final votingPeriodMap = votingPeriod != null ? (votingPeriod is DateRangeModel ? (votingPeriod as DateRangeModel).toJson() : DateRangeModel.fromEntity(votingPeriod!).toJson()) : null;
+    final votingPeriodMap = votingPeriod != null
+        ? (votingPeriod is DateRangeModel
+              ? (votingPeriod as DateRangeModel).toJson()
+              : DateRangeModel.fromEntity(votingPeriod!).toJson())
+        : null;
 
-    final slotStatsList = slotStats.map((e) => e is SlotStatsModel ? e.toJson() : SlotStatsModel.fromEntity(e).toJson()).toList();
+    final slotStatsList = slotStats
+        .map(
+          (e) => e is SlotStatsModel
+              ? e.toJson()
+              : SlotStatsModel.fromEntity(e).toJson(),
+        )
+        .toList();
 
-    final expenseSummaryMap = expenseSummary is ExpenseSummaryModel ? (expenseSummary as ExpenseSummaryModel).toJson() : ExpenseSummaryModel.fromEntity(expenseSummary).toJson();
+    final expenseSummaryMap = expenseSummary is ExpenseSummaryModel
+        ? (expenseSummary as ExpenseSummaryModel).toJson()
+        : ExpenseSummaryModel.fromEntity(expenseSummary).toJson();
 
     return {
       'id': id,

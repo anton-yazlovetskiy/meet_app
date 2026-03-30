@@ -369,4 +369,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get expandLabel => 'Развернуть';
+
+  @override
+  String get applicationSubmittedShort => 'Заявка подана';
+
+  @override
+  String get applicationCancelledShort => 'Заявка отозвана';
+
+  @override
+  String get addToCalendarLabel => 'Добавить в календарь';
+
+  @override
+  String get maxParticipantsLabel => 'Максимум';
+
+  @override
+  String get applicantsForParticipationLabel => 'Заявок';
+
+  @override
+  String get unlimitedLabel => 'Без ограничения';
 }

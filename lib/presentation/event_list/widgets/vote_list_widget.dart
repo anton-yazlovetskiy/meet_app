@@ -1,89 +1,236 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class VoteListWidget extends StatefulWidget {
-  final String dayLabel;
+import '../models/event_vote_slot.dart';
 
-  const VoteListWidget({super.key, required this.dayLabel});
+class VoteListWidget extends StatelessWidget {
+  final String localeCode;
+  final DateTime weekStart;
+  final int startHour;
+  final List<EventVoteSlot> slots;
+  final Set<String> selectedSlotIds;
+  final int selectedDayIndex;
+  final ValueChanged<int> onSelectDay;
+  final ValueChanged<String> onToggleSlot;
+  final VoidCallback onPreviousWeek;
+  final VoidCallback onNextWeek;
+  final VoidCallback onShowAfternoonHours;
+  final VoidCallback onShowMorningHours;
 
-  @override
-  State<VoteListWidget> createState() => _VoteListWidgetState();
-}
-
-class _VoteListWidgetState extends State<VoteListWidget> {
-  int _selectedDay = 0;
-  final Set<int> _selectedSlots = {};
+  const VoteListWidget({
+    super.key,
+    required this.localeCode,
+    required this.weekStart,
+    required this.startHour,
+    required this.slots,
+    required this.selectedSlotIds,
+    required this.selectedDayIndex,
+    required this.onSelectDay,
+    required this.onToggleSlot,
+    required this.onPreviousWeek,
+    required this.onNextWeek,
+    required this.onShowAfternoonHours,
+    required this.onShowMorningHours,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final days = List.generate(14, (i) => '${widget.dayLabel} ${i + 1}');
-    return SizedBox(
-      height: 240,
-      child: Row(
+    final colorScheme = Theme.of(context).colorScheme;
+    final hasSelectedDay = selectedDayIndex >= 0 && selectedDayIndex < 7;
+    final selectedDay = hasSelectedDay
+        ? weekStart.add(Duration(days: selectedDayIndex))
+        : null;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
         children: [
-          SizedBox(
-            width: 120,
-            child: ListView.separated(
-              itemCount: days.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 6),
-              itemBuilder: (context, index) {
-                final active = index == _selectedDay;
-                return InkWell(
-                  onTap: () => setState(() => _selectedDay = index),
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: active
-                          ? Theme.of(context).colorScheme.primaryContainer
-                          : Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest,
-                    ),
-                    child: Text(days[index]),
-                  ),
-                );
-              },
-            ),
+          Row(
+            children: [
+              IconButton(
+                onPressed: onPreviousWeek,
+                icon: const Icon(Icons.chevron_left),
+              ),
+              const Spacer(),
+              Text(
+                '00-23',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                onPressed: onNextWeek,
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: ListView.separated(
-              itemCount: 12,
-              separatorBuilder: (_, _) => const SizedBox(height: 6),
-              itemBuilder: (context, index) {
-                final key = _selectedDay * 100 + index;
-                final selected = _selectedSlots.contains(key);
-                return ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  tileColor: selected
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
-                  title: Text('${8 + index}:00'),
-                  trailing: Icon(
-                    selected
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      if (selected) {
-                        _selectedSlots.remove(key);
-                      } else {
-                        _selectedSlots.add(key);
-                      }
-                    });
-                  },
-                );
-              },
-            ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  children: List.generate(7, (index) {
+                    final day = weekStart.add(Duration(days: index));
+                    final selected = selectedDayIndex == index;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: InkWell(
+                        onTap: () => onSelectDay(index),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: selected
+                                ? colorScheme.primaryContainer
+                                : colorScheme.surfaceContainerHighest,
+                          ),
+                          child: Text(
+                            _formatShortDayDate(day),
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  children: List.generate(6, (row) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Row(
+                        children: List.generate(4, (col) {
+                          final hour = row + col * 6;
+                          final slot = selectedDay == null
+                              ? null
+                              : _slotByDateHour(selectedDay, hour);
+                          final isSelected =
+                              slot != null && selectedSlotIds.contains(slot.id);
+                          final isAvailable = slot?.isAvailable ?? false;
+                          final votes = slot?.votes ?? 0;
+
+                          return Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 2,
+                              ),
+                              child: _HourGridCell(
+                                hourLabel:
+                                    '${hour.toString().padLeft(2, '0')}:00',
+                                votes: votes,
+                                available: isAvailable,
+                                selected: isSelected,
+                                onTap: slot == null
+                                    ? null
+                                    : () => onToggleSlot(slot.id),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  EventVoteSlot? _slotByDateHour(DateTime day, int hour) {
+    return slots.where((item) {
+      final date = item.dateTime;
+      return date.year == day.year &&
+          date.month == day.month &&
+          date.day == day.day &&
+          date.hour == hour;
+    }).firstOrNull;
+  }
+
+  String _formatShortDayDate(DateTime date) {
+    final raw = DateFormat(
+      'EEE d MMM',
+      localeCode,
+    ).format(date).replaceAll('.', '').replaceAll(',', '').trim();
+    if (raw.isEmpty) {
+      return raw;
+    }
+    return '${raw[0].toUpperCase()}${raw.substring(1)}';
+  }
+}
+
+class _HourGridCell extends StatelessWidget {
+  final String hourLabel;
+  final int votes;
+  final bool available;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  const _HourGridCell({
+    required this.hourLabel,
+    required this.votes,
+    required this.available,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final background = !available
+        ? colorScheme.surfaceContainerHighest
+        : selected
+        ? colorScheme.primary.withValues(alpha: 0.15)
+        : Colors.transparent;
+
+    return MouseRegion(
+      cursor: available ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      child: InkWell(
+        onTap: available ? onTap : null,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: background,
+            border: Border.all(
+              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  hourLabel,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ),
+              if (!available)
+                const Icon(Icons.close, size: 14, color: Color(0xFFE25858))
+              else
+                Text(
+                  selected ? '1' : '$votes',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

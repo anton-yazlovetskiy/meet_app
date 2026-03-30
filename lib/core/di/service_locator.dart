@@ -172,6 +172,14 @@ Future<void> setupDependencyInjection({AppConfig? appConfig}) async {
     ),
   );
 
+  getIt.registerSingleton<GetEventSlotsUseCase>(
+    GetEventSlotsUseCase(eventRepository: getIt<EventRepository>()),
+  );
+
+  getIt.registerSingleton<FilterAndSortEventFeedUseCase>(
+    FilterAndSortEventFeedUseCase(),
+  );
+
   /// Usecases - Application
   getIt.registerSingleton<CreateApplicationUseCase>(
     CreateApplicationUseCase(

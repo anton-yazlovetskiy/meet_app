@@ -1,14 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:get_it/get_it.dart';
 import 'dart:ui';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:meet_app/l10n/app_localizations.dart';
+
 import '../../../core/di/service_locator.dart';
 import '../../../core/router/app_router.dart';
 import '../../domain/usecases/auth/sign_in_usecases.dart';
-import '../core/widgets/app_header.dart';
-import '../core/widgets/auth_button_group.dart';
 import '../core/widgets/tariff_card.dart';
-import 'package:meet_app/l10n/app_localizations.dart';
+import 'widgets/app_header.dart';
+import 'widgets/auth_button_group.dart';
 
 @RoutePage()
 class LoginPage extends StatefulWidget {

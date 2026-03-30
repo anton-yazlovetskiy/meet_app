@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
+
 class LanguageSwitcher extends StatelessWidget {
   final Locale value;
   final ValueChanged<Locale> onChanged;
@@ -12,11 +14,12 @@ class LanguageSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return PopupMenuButton<Locale>(
       onSelected: onChanged,
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: Locale('ru'), child: Text('Русский')),
-        PopupMenuItem(value: Locale('en'), child: Text('English')),
+      itemBuilder: (context) => [
+        PopupMenuItem(value: const Locale('ru'), child: Text(l10n.russian)),
+        PopupMenuItem(value: const Locale('en'), child: Text(l10n.english)),
       ],
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),

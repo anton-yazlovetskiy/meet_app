@@ -369,4 +369,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expandLabel => 'Expand';
+
+  @override
+  String get applicationSubmittedShort => 'Application submitted';
+
+  @override
+  String get applicationCancelledShort => 'Application withdrawn';
+
+  @override
+  String get addToCalendarLabel => 'Add to calendar';
+
+  @override
+  String get maxParticipantsLabel => 'Maximum';
+
+  @override
+  String get applicantsForParticipationLabel => 'Applications';
+
+  @override
+  String get unlimitedLabel => 'Unlimited';
 }

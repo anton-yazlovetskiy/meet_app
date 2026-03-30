@@ -1,9 +1,11 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
-import '../../../domain/index.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../data/models/index.dart';
+import '../../../domain/index.dart';
 import 'event_datasource.dart';
 
 /// Mock реализация EventRemoteDataSource
@@ -40,7 +42,10 @@ class MockEventRemoteDataSourceImpl implements EventRemoteDataSource {
     try {
       final json = _prefs.getString(_slotsKey) ?? '{}';
       final Map<String, dynamic> data = jsonDecode(json);
-      final slots = data.map((k, v) => MapEntry(k, (v as List).map((e) => SlotModel.fromJson(e)).toList()));
+      final slots = data.map(
+        (k, v) =>
+            MapEntry(k, (v as List).map((e) => SlotModel.fromJson(e)).toList()),
+      );
       _logger.d('Loaded slots for ${slots.length} events');
       return slots;
     } catch (e, stack) {
@@ -51,7 +56,9 @@ class MockEventRemoteDataSourceImpl implements EventRemoteDataSource {
 
   void _saveSlots(Map<String, List<SlotModel>> slots) {
     try {
-      final json = jsonEncode(slots.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())));
+      final json = jsonEncode(
+        slots.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList())),
+      );
       _prefs.setString(_slotsKey, json);
       _logger.d('Saved slots for ${slots.length} events');
     } catch (e, stack) {
@@ -85,17 +92,69 @@ class MockEventRemoteDataSourceImpl implements EventRemoteDataSource {
       _logger.d('Retrieved event: ${event.title}');
       return event;
     } catch (e, stack) {
-      _logger.e('Error getting event by id $eventId: $e', error: e, stackTrace: stack);
+      _logger.e(
+        'Error getting event by id $eventId: $e',
+        error: e,
+        stackTrace: stack,
+      );
       rethrow;
     }
   }
 
   @override
-  Future<List<EventModel>> listEvents({String? userId, List<String>? tags, bool? isPublic, String? status, String? searchQuery, int limit = 20, int offset = 0}) async {
+  Future<List<EventModel>> listEvents({
+    String? userId,
+    List<String>? tags,
+    bool? isPublic,
+    String? status,
+    String? searchQuery,
+    int limit = 20,
+    int offset = 0,
+  }) async {
     try {
       final events = _loadEvents();
       var filtered = events.values.toList();
-      _logger.d('Listing events: total ${filtered.length}, filters: userId=$userId, tags=$tags, status=$status, search=$searchQuery');
+      if (isPublic != null) {
+        filtered = filtered
+            .where((event) => event.isPublic == isPublic)
+            .toList();
+      }
+      if (status != null && status.isNotEmpty) {
+        filtered = filtered
+            .where((event) => event.status.name == status)
+            .toList();
+      }
+      if (tags != null && tags.isNotEmpty) {
+        filtered = filtered
+            .where((event) => event.tags.any(tags.contains))
+            .toList();
+      }
+      final normalizedSearch = searchQuery?.trim().toLowerCase() ?? '';
+      if (normalizedSearch.isNotEmpty) {
+        filtered = filtered.where((event) {
+          final text = <String>[
+            event.title,
+            event.description,
+            event.location.address ?? '',
+            ...event.tags,
+          ].join(' ').toLowerCase();
+          return text.contains(normalizedSearch);
+        }).toList();
+      }
+      if (userId != null && userId.isNotEmpty) {
+        filtered = filtered.where((event) {
+          return event.creatorId == userId ||
+              event.participants.contains(userId) ||
+              event.applicants.contains(userId);
+        }).toList();
+      }
+      filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      final safeOffset = offset.clamp(0, filtered.length);
+      final end = (safeOffset + limit).clamp(0, filtered.length);
+      filtered = filtered.sublist(safeOffset, end);
+      _logger.d(
+        'Listing events: total ${filtered.length}, filters: userId=$userId, tags=$tags, status=$status, search=$searchQuery',
+      );
       return filtered;
     } catch (e, stack) {
       _logger.e('Error listing events: $e', error: e, stackTrace: stack);

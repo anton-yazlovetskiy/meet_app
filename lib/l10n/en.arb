@@ -118,5 +118,11 @@
   "replyLabel": "Reply",
   "tagMismatchLabel": "Tag does not match",
   "collapseLabel": "Collapse",
-  "expandLabel": "Expand"
+  "expandLabel": "Expand",
+  "applicationSubmittedShort": "Application submitted",
+  "applicationCancelledShort": "Application withdrawn",
+  "addToCalendarLabel": "Add to calendar",
+  "maxParticipantsLabel": "Maximum",
+  "applicantsForParticipationLabel": "Applications",
+  "unlimitedLabel": "Unlimited"
 }
