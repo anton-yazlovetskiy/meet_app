@@ -654,7 +654,10 @@ class _EventListPageState extends State<EventListPage> {
           insetPadding: const EdgeInsets.all(12),
           clipBehavior: Clip.antiAlias,
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
+            constraints: BoxConstraints(
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+            ),
             child: const EventCreatePage(),
           ),
         );
