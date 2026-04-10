@@ -235,9 +235,9 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     if (current == null) {
       return;
     }
-    final updated = current.copyWith(
-      weekOffset: current.weekOffset + event.delta,
-    );
+    final maxOffset = _maxWeekOffset(current);
+    final nextOffset = (current.weekOffset + event.delta).clamp(0, maxOffset);
+    final updated = current.copyWith(weekOffset: nextOffset);
     emit(state.copyWith(sourceItems: _replaceItem(updated)));
     await _applyFilters(emit);
   }
@@ -285,14 +285,22 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     }
 
     final selected = Set<String>.from(current.selectedSlotIds);
+    var delta = 1;
     if (selected.contains(event.slotId)) {
       selected.remove(event.slotId);
+      delta = -1;
     } else {
       selected.add(event.slotId);
     }
 
+    final updatedSlots = _updateSlotVotes(
+      current.slots,
+      deltaBySlotId: {event.slotId: delta},
+    );
+
     final hasSelection = selected.isNotEmpty;
     final updated = current.copyWith(
+      slots: updatedSlots,
       selectedSlotIds: selected,
       appliedSlotIds: Set<String>.from(selected),
     );
@@ -331,14 +339,28 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     }
 
     final allSelected = normalizedIds.every(selected.contains);
+    final deltaBySlotId = <String, int>{};
     if (allSelected) {
-      selected.removeAll(normalizedIds);
+      for (final slotId in normalizedIds) {
+        selected.remove(slotId);
+        deltaBySlotId[slotId] = -1;
+      }
     } else {
-      selected.addAll(normalizedIds);
+      for (final slotId in normalizedIds) {
+        if (selected.add(slotId)) {
+          deltaBySlotId[slotId] = 1;
+        }
+      }
     }
+
+    final updatedSlots = _updateSlotVotes(
+      current.slots,
+      deltaBySlotId: deltaBySlotId,
+    );
 
     final hasSelection = selected.isNotEmpty;
     final updated = current.copyWith(
+      slots: updatedSlots,
       selectedSlotIds: selected,
       appliedSlotIds: Set<String>.from(selected),
     );
@@ -475,12 +497,12 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
         ? event.location.mapLink
         : 'https://maps.google.com/?q=${event.location.lat ?? 0},${event.location.lng ?? 0}';
 
-    return EventFeedItem(
+    final baseItem = EventFeedItem(
       event: event,
       city: city,
       address: address,
       mapUrl: mapUrl,
-      imageUrl: null,
+      imageUrl: _photoForEvent(event.id),
       relation: relation,
       isVoting: event.eventType == EventType.voting,
       isParticipant: relation == EventRelationKind.participating,
@@ -489,10 +511,16 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
       weekOffset: 0,
       hourOffset: 12,
       selectedDayIndex: -1,
-      slots: const [],
+      slots: const <EventVoteSlot>[],
       selectedSlotIds: const <String>{},
       appliedSlotIds: const <String>{},
     );
+
+    if (!baseItem.isVoting) {
+      return baseItem;
+    }
+
+    return baseItem.copyWith(slots: _generateSyntheticSlots(baseItem));
   }
 
   EventRelationKind _resolveRelation(Event event, String? currentUserId) {
@@ -562,6 +590,54 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     }
 
     return result;
+  }
+
+  List<EventVoteSlot> _updateSlotVotes(
+    List<EventVoteSlot> slots, {
+    required Map<String, int> deltaBySlotId,
+  }) {
+    if (deltaBySlotId.isEmpty) {
+      return slots;
+    }
+
+    return slots
+        .map((slot) {
+          final delta = deltaBySlotId[slot.id];
+          if (delta == null || delta == 0) {
+            return slot;
+          }
+          return slot.copyWith(votes: (slot.votes + delta).clamp(0, 1 << 30));
+        })
+        .toList(growable: false);
+  }
+
+  int _maxWeekOffset(EventFeedItem item) {
+    final period = item.event.votingPeriod;
+    if (period == null) {
+      return 0;
+    }
+
+    final baseWeekStart = DateTime(
+      item.startDate.year,
+      item.startDate.month,
+      item.startDate.day,
+    ).subtract(Duration(days: item.startDate.weekday - 1));
+    final periodEndWeekStart = DateTime(
+      period.end.year,
+      period.end.month,
+      period.end.day,
+    ).subtract(Duration(days: period.end.weekday - 1));
+
+    final days = periodEndWeekStart.difference(baseWeekStart).inDays;
+    if (days <= 0) {
+      return 0;
+    }
+    return (days / 7).floor();
+  }
+
+  String _photoForEvent(String eventId) {
+    final index = eventId.hashCode.abs() % _photoPool.length;
+    return _photoPool[index];
   }
 
   List<String> _extractTags(List<EventFeedItem> items) {
@@ -814,6 +890,17 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     'user_010',
     'user_011',
     'user_012',
+  ];
+
+  static const List<String> _photoPool = [
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1280&q=70',
+    'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1280&q=70',
+    'https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1280&q=70',
+    'https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?auto=format&fit=crop&w=1280&q=70',
+    'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1280&q=70',
+    'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1280&q=70',
+    'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1280&q=70',
+    'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1280&q=70',
   ];
 
   EventFeedScopeFilter _scopeToDomain(EventListScopeFilter value) {

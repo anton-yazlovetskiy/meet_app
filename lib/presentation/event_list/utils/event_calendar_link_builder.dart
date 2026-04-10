@@ -9,9 +9,7 @@ class EventCalendarLinkBuilder {
   const EventCalendarLinkBuilder._();
 
   static Uri build(EventFeedItem item) {
-    if (!kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.iOS ||
-            defaultTargetPlatform == TargetPlatform.macOS)) {
+    if (!kIsWeb) {
       return _buildAppleCalendarDataUri(item);
     }
 

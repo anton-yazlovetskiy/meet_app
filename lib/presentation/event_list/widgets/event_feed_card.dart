@@ -143,35 +143,36 @@ class EventFeedCard extends StatelessWidget {
     required String fixedCapacityLabel,
     required int optimisticApplicantsCount,
   }) {
-    return SizedBox(
-      height: headerHeight,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            width: 2,
-            margin: const EdgeInsets.only(top: 1, bottom: 1),
-            decoration: BoxDecoration(
-              color: _relationColor(item.relation, colorScheme),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      ),
+      child: SizedBox(
+        height: headerHeight,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _ImageAndTags(
+                item: item,
+                relationColor: _relationColor(item.relation, colorScheme),
               ),
             ),
-          ),
-          Expanded(child: _ImageAndTags(item: item)),
-          Expanded(
-            flex: 2,
-            child: _buildMainInfo(
-              context,
-              l10n: l10n,
-              colorScheme: colorScheme,
-              fixedCapacityLabel: fixedCapacityLabel,
-              optimisticApplicantsCount: optimisticApplicantsCount,
+            Expanded(
+              flex: 2,
+              child: _buildMainInfo(
+                context,
+                l10n: l10n,
+                colorScheme: colorScheme,
+                fixedCapacityLabel: fixedCapacityLabel,
+                optimisticApplicantsCount: optimisticApplicantsCount,
+              ),
             ),
-          ),
-          _buildRightRail(context, l10n: l10n, colorScheme: colorScheme),
-        ],
+            if (sidePanelState.showActions)
+              _buildRightRail(context, l10n: l10n, colorScheme: colorScheme),
+          ],
+        ),
       ),
     );
   }
@@ -197,7 +198,7 @@ class EventFeedCard extends StatelessWidget {
           }
         },
         title: Container(
-          height: 34,
+          height: 38,
           alignment: Alignment.center,
           child: Icon(
             item.isExpanded
@@ -695,8 +696,9 @@ class _SideActionButton extends StatelessWidget {
 
 class _ImageAndTags extends StatelessWidget {
   final EventFeedItem item;
+  final Color relationColor;
 
-  const _ImageAndTags({required this.item});
+  const _ImageAndTags({required this.item, required this.relationColor});
 
   @override
   Widget build(BuildContext context) {
@@ -726,6 +728,18 @@ class _ImageAndTags extends StatelessWidget {
                   child: Text(AppLocalizations.of(context)!.noPhotoLabel),
                 ),
               ),
+            Positioned(
+              left: 8,
+              top: 8,
+              child: Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: relationColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(

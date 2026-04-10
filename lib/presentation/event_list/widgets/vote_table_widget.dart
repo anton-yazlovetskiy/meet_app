@@ -139,7 +139,6 @@ class VoteTableWidget extends StatelessWidget {
           child: Row(
             children: List.generate(7, (index) {
               final day = weekStart.add(Duration(days: index));
-              final dateLabel = _formatShortDayDate(day);
               final isActive = _hasAnySlotForDay(day);
               return Expanded(
                 child: Padding(
@@ -148,7 +147,10 @@ class VoteTableWidget extends StatelessWidget {
                     onTap: isActive ? () => onDayTap(index) : null,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 7,
+                      ),
                       decoration: BoxDecoration(
                         color:
                             Theme.of(
@@ -161,7 +163,24 @@ class VoteTableWidget extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            dateLabel,
+                            _formatWeekdayLabel(day),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: isActive
+                                      ? null
+                                      : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _formatDayMonthLabel(day),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.labelMedium
                                 ?.copyWith(
                                   fontWeight: FontWeight.w700,
@@ -196,9 +215,20 @@ class VoteTableWidget extends StatelessWidget {
     );
   }
 
-  String _formatShortDayDate(DateTime date) {
+  String _formatWeekdayLabel(DateTime date) {
     final raw = DateFormat(
-      'EEE d MMM',
+      'EEE',
+      localeCode,
+    ).format(date).replaceAll('.', '').replaceAll(',', '').trim();
+    if (raw.isEmpty) {
+      return raw;
+    }
+    return '${raw[0].toUpperCase()}${raw.substring(1)}';
+  }
+
+  String _formatDayMonthLabel(DateTime date) {
+    final raw = DateFormat(
+      'd MMM',
       localeCode,
     ).format(date).replaceAll('.', '').replaceAll(',', '').trim();
     if (raw.isEmpty) {
@@ -292,6 +322,7 @@ class _VoteCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final displayVotes = (votes + (selected ? 1 : 0)).clamp(0, 1 << 30);
     final background = !available
         ? colorScheme.surfaceContainerHighest
         : top
@@ -318,7 +349,7 @@ class _VoteCell extends StatelessWidget {
           child: !available
               ? const Icon(Icons.close, size: 14, color: Color(0xFFE25858))
               : Text(
-                  selected ? '1' : '$votes',
+                  '$displayVotes',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: colorScheme.onSurfaceVariant,

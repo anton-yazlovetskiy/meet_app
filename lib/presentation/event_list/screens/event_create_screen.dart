@@ -143,17 +143,13 @@ class _EventCreatePageState extends State<EventCreatePage> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedStartDate == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Выберите дату начала')));
+      _showFloatingMessage('Выберите дату начала');
       return;
     }
 
     if (_eventType == EventType.voting &&
         (_selectedVotingStart == null || _selectedVotingEnd == null)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Выберите период голосования')),
-      );
+      _showFloatingMessage('Выберите период голосования');
       return;
     }
 
@@ -201,14 +197,26 @@ class _EventCreatePageState extends State<EventCreatePage> {
       Navigator.of(context).pop(event);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Ошибка: $e')));
+      _showFloatingMessage('Ошибка: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _showFloatingMessage(String text) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        showCloseIcon: true,
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        content: Text(text),
+      ),
+    );
   }
 
   String _formatDate(DateTime? date) {

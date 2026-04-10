@@ -72,6 +72,7 @@ class VoteListWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
+                flex: 1,
                 child: Column(
                   children: List.generate(7, (index) {
                     final day = weekStart.add(Duration(days: index));
@@ -105,43 +106,43 @@ class VoteListWidget extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  children: List.generate(6, (row) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Row(
-                        children: List.generate(4, (col) {
-                          final hour = row + col * 6;
-                          final slot = selectedDay == null
-                              ? null
-                              : _slotByDateHour(selectedDay, hour);
-                          final isSelected =
-                              slot != null && selectedSlotIds.contains(slot.id);
-                          final isAvailable = slot?.isAvailable ?? false;
-                          final votes = slot?.votes ?? 0;
+                flex: 3,
+                child: selectedDay == null
+                    ? const SizedBox.shrink()
+                    : Column(
+                        children: List.generate(6, (row) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              children: List.generate(4, (col) {
+                                final hour = row + col * 6;
+                                final slot = _slotByDateHour(selectedDay, hour);
+                                final isSelected =
+                                    slot != null &&
+                                    selectedSlotIds.contains(slot.id);
+                                final isAvailable = slot?.isAvailable ?? false;
 
-                          return Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 2,
-                              ),
-                              child: _HourGridCell(
-                                hourLabel:
-                                    '${hour.toString().padLeft(2, '0')}:00',
-                                votes: votes,
-                                available: isAvailable,
-                                selected: isSelected,
-                                onTap: slot == null
-                                    ? null
-                                    : () => onToggleSlot(slot.id),
-                              ),
+                                return Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 2,
+                                    ),
+                                    child: _HourGridCell(
+                                      hourLabel:
+                                          '${hour.toString().padLeft(2, '0')}:00',
+                                      available: isAvailable,
+                                      selected: isSelected,
+                                      onTap: slot == null
+                                          ? null
+                                          : () => onToggleSlot(slot.id),
+                                    ),
+                                  ),
+                                );
+                              }),
                             ),
                           );
                         }),
                       ),
-                    );
-                  }),
-                ),
               ),
             ],
           ),
@@ -174,14 +175,12 @@ class VoteListWidget extends StatelessWidget {
 
 class _HourGridCell extends StatelessWidget {
   final String hourLabel;
-  final int votes;
   final bool available;
   final bool selected;
   final VoidCallback? onTap;
 
   const _HourGridCell({
     required this.hourLabel,
-    required this.votes,
     required this.available,
     required this.selected,
     required this.onTap,
@@ -213,19 +212,37 @@ class _HourGridCell extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Expanded(
-                child: Text(
-                  hourLabel,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ),
               if (!available)
-                const Icon(Icons.close, size: 14, color: Color(0xFFE25858))
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.close,
+                        size: 14,
+                        color: Color(0xFFE25858),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        hourLabel,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.55,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               else
-                Text(
-                  selected ? '1' : '$votes',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+                Expanded(
+                  child: Text(
+                    hourLabel,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    ),
                   ),
                 ),
             ],

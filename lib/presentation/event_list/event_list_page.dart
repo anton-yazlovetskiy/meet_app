@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/di/service_locator.dart';
-import '../../core/router/app_router.dart';
 import '../../l10n/app_localizations.dart';
 import '../core/theme/app_theme.dart';
 import '../core/widgets/layout_builder.dart';
@@ -16,6 +15,7 @@ import 'bloc/event_list_event.dart';
 import 'bloc/event_list_state.dart';
 import 'models/event_feed_item.dart';
 import 'models/event_list_filter.dart';
+import 'screens/event_create_screen.dart';
 import 'utils/event_calendar_link_builder.dart';
 import 'widgets/event_feed_card.dart';
 import 'widgets/event_feed_list.dart';
@@ -171,12 +171,16 @@ class _EventListPageState extends State<EventListPage> {
                             isMobileLayout: isMobile,
                           ),
                           Positioned(
-                            left: 12,
-                            bottom: 12,
+                            right: 16,
+                            bottom:
+                                (_sidePanelType == _DesktopSidePanelType.none &&
+                                    !_isMobileRightDrawerOpen)
+                                ? 88
+                                : 16,
                             child: IgnorePointer(
                               ignoring: _toasts.isEmpty,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: _toasts
                                     .map(
                                       (toast) => Padding(
@@ -417,8 +421,15 @@ class _EventListPageState extends State<EventListPage> {
           EventListSlotToggled(eventId: item.id, slotId: slotId),
         ),
         onToggleHourBatch: (hour) {
+          final weekStart = _weekStart(item.startDate).add(
+            Duration(days: item.weekOffset * 7),
+          );
+          final weekEnd = weekStart.add(const Duration(days: 7));
           final ids = item.slots
-              .where((slot) => slot.isAvailable && slot.dateTime.hour == hour)
+              .where((slot) => slot.isAvailable)
+              .where((slot) => slot.dateTime.hour == hour)
+              .where((slot) => !slot.dateTime.isBefore(weekStart))
+              .where((slot) => slot.dateTime.isBefore(weekEnd))
               .map((slot) => slot.id)
               .toList(growable: false);
           context.read<EventListBloc>().add(
@@ -431,13 +442,17 @@ class _EventListPageState extends State<EventListPage> {
           );
           final dayDate = weekStart.add(Duration(days: dayIndex));
           final day = DateTime(dayDate.year, dayDate.month, dayDate.day);
+          final startHour = item.hourOffset;
+          final endHourExclusive = startHour + 12;
           final ids = item.slots
               .where(
                 (slot) =>
                     slot.isAvailable &&
                     slot.dateTime.year == day.year &&
                     slot.dateTime.month == day.month &&
-                    slot.dateTime.day == day.day,
+                    slot.dateTime.day == day.day &&
+                    slot.dateTime.hour >= startHour &&
+                    slot.dateTime.hour < endHourExclusive,
               )
               .map((slot) => slot.id)
               .toList(growable: false);
@@ -461,7 +476,7 @@ class _EventListPageState extends State<EventListPage> {
   void _pushActionToast(String text, IconData icon) {
     final id = DateTime.now().microsecondsSinceEpoch.toString();
     final timer = Timer(
-      const Duration(milliseconds: 330),
+      const Duration(milliseconds: 700),
       () => _removeToast(id),
     );
     final toast = _EventActionToast(
@@ -623,7 +638,28 @@ class _EventListPageState extends State<EventListPage> {
   }
 
   Future<void> _openCreateEventPage(BuildContext context) async {
-    final createdEvent = await context.router.push(const EventCreateRoute());
+    final createdEvent = await showDialog<Object?>(
+      context: context,
+      useSafeArea: true,
+      builder: (dialogContext) {
+        final media = MediaQuery.sizeOf(dialogContext);
+        final maxWidth = media.width >= 1200
+            ? 960.0
+            : media.width >= 900
+            ? 860.0
+            : media.width - 24;
+        final maxHeight = media.height - 24;
+
+        return Dialog(
+          insetPadding: const EdgeInsets.all(12),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
+            child: const EventCreatePage(),
+          ),
+        );
+      },
+    );
     if (!context.mounted || createdEvent == null) {
       return;
     }
@@ -710,32 +746,34 @@ class _EventActionToastView extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 260),
-        padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
+        padding: const EdgeInsets.fromLTRB(12, 9, 8, 9),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          color: const Color(0xFF2E9D55),
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16, color: colorScheme.onSurfaceVariant),
+            Icon(icon, size: 16, color: Colors.white),
             const SizedBox(width: 8),
-            Expanded(
+            Flexible(
               child: Text(
                 text,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelMedium,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
             const SizedBox(width: 4),
             InkWell(
               onTap: onClose,
               borderRadius: BorderRadius.circular(10),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.all(2),
-                child: Icon(Icons.close, size: 14),
+                child: Icon(Icons.close, size: 14, color: colorScheme.surface),
               ),
             ),
           ],

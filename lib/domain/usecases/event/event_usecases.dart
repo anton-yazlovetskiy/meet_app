@@ -66,8 +66,8 @@ class CreateEventUseCase extends UseCase<Event, CreateEventParams> {
         final userEvents = await eventRepository.getUserCreatedEvents(params.userId);
         final monthAgo = now.subtract(const Duration(days: 30));
         final recentEvents = userEvents.where((e) => e.createdAt.isAfter(monthAgo)).toList();
-        if (recentEvents.length >= 4) {
-          throw PremiumLimitExceededException('Вы создали максимум мероприятий (4) в этом месяце', 'max_events_per_month');
+        if (recentEvents.length >= 2) {
+          throw PremiumLimitExceededException('Вы создали максимум мероприятий (2) в этом месяце', 'max_events_per_month');
         }
       }
 

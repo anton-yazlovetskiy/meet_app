@@ -86,9 +86,13 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: colorScheme.surfaceContainerHighest,
+        backgroundColor: colorScheme.surfaceContainer,
         contentTextStyle: TextStyle(color: colorScheme.onSurface),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        showCloseIcon: true,
+        closeIconColor: colorScheme.onSurfaceVariant,
+        elevation: 0,
+        insetPadding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
       ),
       dividerTheme: DividerThemeData(
         color: colorScheme.outlineVariant,

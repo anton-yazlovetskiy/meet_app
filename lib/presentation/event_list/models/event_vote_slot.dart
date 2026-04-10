@@ -13,6 +13,20 @@ class EventVoteSlot extends Equatable {
     required this.isAvailable,
   });
 
+  EventVoteSlot copyWith({
+    String? id,
+    DateTime? dateTime,
+    int? votes,
+    bool? isAvailable,
+  }) {
+    return EventVoteSlot(
+      id: id ?? this.id,
+      dateTime: dateTime ?? this.dateTime,
+      votes: votes ?? this.votes,
+      isAvailable: isAvailable ?? this.isAvailable,
+    );
+  }
+
   @override
   List<Object?> get props => [id, dateTime, votes, isAvailable];
 }

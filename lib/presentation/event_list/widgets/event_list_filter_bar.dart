@@ -55,12 +55,7 @@ class EventListFilterBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
-                child: Icon(
-                  dateSort == EventListDateSort.newestFirst
-                      ? Icons.arrow_downward
-                      : Icons.arrow_upward,
-                  size: 18,
-                ),
+                child: Icon(Icons.calendar_month_outlined, size: 18),
               ),
             ),
           ),
@@ -77,7 +72,7 @@ class EventListFilterBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
-                child: Icon(_priceIcon(priceSort), size: 18),
+                child: Icon(Icons.currency_ruble, size: 18),
               ),
             ),
           ),
@@ -108,14 +103,6 @@ class EventListFilterBar extends StatelessWidget {
       EventListScopeFilter.applied => const Color(0xFF4E88E7),
       EventListScopeFilter.all => colorScheme.outlineVariant,
       EventListScopeFilter.archived => colorScheme.outline,
-    };
-  }
-
-  IconData _priceIcon(EventListPriceSort sort) {
-    return switch (sort) {
-      EventListPriceSort.none => Icons.swap_vert,
-      EventListPriceSort.ascending => Icons.arrow_upward,
-      EventListPriceSort.descending => Icons.arrow_downward,
     };
   }
 }
