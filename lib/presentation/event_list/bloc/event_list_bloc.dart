@@ -89,7 +89,7 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
       emit(
         state.copyWith(
           status: EventListStatus.failure,
-          errorMessage: 'Failed to load events',
+          errorMessage: null,
         ),
       );
     }
@@ -307,9 +307,9 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     emit(
       state.copyWith(
         sourceItems: _replaceItem(updated),
-        snackbarMessage: hasSelection
-            ? 'applicationSubmitted'
-            : 'applicationCancelled',
+        snackbarKind: hasSelection
+            ? EventListSnackbarKind.applicationSubmitted
+            : EventListSnackbarKind.applicationCancelled,
         snackbarVersion: state.snackbarVersion + 1,
       ),
     );
@@ -367,9 +367,9 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     emit(
       state.copyWith(
         sourceItems: _replaceItem(updated),
-        snackbarMessage: hasSelection
-            ? 'applicationSubmitted'
-            : 'applicationCancelled',
+        snackbarKind: hasSelection
+            ? EventListSnackbarKind.applicationSubmitted
+            : EventListSnackbarKind.applicationCancelled,
         snackbarVersion: state.snackbarVersion + 1,
       ),
     );
@@ -396,13 +396,13 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
       appliedSlotIds: Set<String>.from(current.selectedSlotIds),
     );
     final message = hasSelection
-        ? 'applicationSubmitted'
-        : 'applicationCancelled';
+        ? EventListSnackbarKind.applicationSubmitted
+        : EventListSnackbarKind.applicationCancelled;
 
     emit(
       state.copyWith(
         sourceItems: _replaceItem(updated),
-        snackbarMessage: message,
+        snackbarKind: message,
         snackbarVersion: state.snackbarVersion + 1,
       ),
     );
@@ -413,7 +413,7 @@ class EventListBloc extends Bloc<EventListEvent, EventListState> {
     EventListSnackbarHandled event,
     Emitter<EventListState> emit,
   ) {
-    emit(state.copyWith(snackbarMessage: null));
+    emit(state.copyWith(snackbarKind: null));
   }
 
   void _onThemeToggled(

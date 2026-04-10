@@ -376,7 +376,7 @@ class EventFeedCard extends StatelessWidget {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                '${l10n.addressLabel}: ${item.address.isEmpty ? '-' : item.address}',
+                '${l10n.addressLabel}: ${item.address.isEmpty ? l10n.notAvailableLabel : item.address}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -623,11 +623,7 @@ class EventFeedCard extends StatelessWidget {
     if (max == null) {
       return l10n.unlimitedLabel;
     }
-
-    if (locale.languageCode == 'ru') {
-      return '$max чел.';
-    }
-    return '$max ppl.';
+    return l10n.participantsShortLabel(max);
   }
 
   Color _relationColor(EventRelationKind relation, ColorScheme colorScheme) {

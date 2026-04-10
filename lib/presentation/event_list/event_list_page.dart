@@ -15,7 +15,7 @@ import 'bloc/event_list_event.dart';
 import 'bloc/event_list_state.dart';
 import 'models/event_feed_item.dart';
 import 'models/event_list_filter.dart';
-import 'screens/event_create_screen.dart';
+import 'screens/event_create/event_create_screen.dart';
 import 'utils/event_calendar_link_builder.dart';
 import 'widgets/event_feed_card.dart';
 import 'widgets/event_feed_list.dart';
@@ -64,14 +64,16 @@ class _EventListPageState extends State<EventListPage> {
             previous.snackbarVersion != current.snackbarVersion,
         listener: (context, state) {
           final l10n = AppLocalizations.of(context)!;
-          if (state.snackbarMessage == null) {
+          if (state.snackbarKind == null) {
             return;
           }
+          final isSubmitted =
+              state.snackbarKind == EventListSnackbarKind.applicationSubmitted;
           _pushActionToast(
-            state.snackbarMessage == 'applicationSubmitted'
+            isSubmitted
                 ? l10n.applicationSubmittedShort
                 : l10n.applicationCancelledShort,
-            state.snackbarMessage == 'applicationSubmitted'
+            isSubmitted
                 ? Icons.thumb_up_alt_outlined
                 : Icons.thumb_down_alt_outlined,
           );
@@ -509,6 +511,7 @@ class _EventListPageState extends State<EventListPage> {
   }
 
   Widget _buildSidePanel(BuildContext context, EventListState state) {
+    final l10n = AppLocalizations.of(context)!;
     EventFeedItem? selectedItem;
     for (final item in state.visibleItems) {
       if (item.id == _sidePanelEventId) {
@@ -518,8 +521,8 @@ class _EventListPageState extends State<EventListPage> {
     }
     return EventSidePanel(
       showChat: _sidePanelType == _DesktopSidePanelType.chat,
-      title: selectedItem?.title ?? '-',
-      chatId: selectedItem?.event.chatId ?? '-',
+      title: selectedItem?.title ?? l10n.notAvailableLabel,
+      chatId: selectedItem?.event.chatId ?? l10n.notAvailableLabel,
       participants: selectedItem?.event.participants ?? const <String>[],
       maxParticipants: selectedItem?.maxParticipants,
       onClose: _closeSidePanel,
@@ -658,7 +661,7 @@ class _EventListPageState extends State<EventListPage> {
               maxWidth: maxWidth,
               maxHeight: maxHeight,
             ),
-            child: const EventCreatePage(),
+            child: const EventCreateScreen(),
           ),
         );
       },

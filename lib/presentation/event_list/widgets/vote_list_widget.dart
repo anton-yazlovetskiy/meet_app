@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../models/event_vote_slot.dart';
 
 class VoteListWidget extends StatelessWidget {
@@ -35,6 +36,7 @@ class VoteListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final hasSelectedDay = selectedDayIndex >= 0 && selectedDayIndex < 7;
     final selectedDay = hasSelectedDay
@@ -57,7 +59,7 @@ class VoteListWidget extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '00-23',
+                l10n.hoursRangeAllLabel,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               const Spacer(),

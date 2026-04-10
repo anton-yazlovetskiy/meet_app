@@ -18,9 +18,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventsPageTitle => 'Events';
 
   @override
-  String get settingsPageTitle => 'Settings';
-
-  @override
   String get createEventButton => 'Create';
 
   @override
@@ -387,4 +384,105 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unlimitedLabel => 'Unlimited';
+
+  @override
+  String get notAvailableLabel => 'N/A';
+
+  @override
+  String get hoursRangeAllLabel => '00-23';
+
+  @override
+  String get hoursRangeAfternoonLabel => '12-23';
+
+  @override
+  String get hoursRangeMorningLabel => '00-11';
+
+  @override
+  String get eventCreateDateRequiredError => 'Select a start date';
+
+  @override
+  String get eventCreateVotingPeriodRequiredError => 'Select a voting period';
+
+  @override
+  String eventCreateErrorMessage(Object message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get eventCreateDateNotSelected => 'Not selected';
+
+  @override
+  String get eventCreateCitySearchHint => 'Search city';
+
+  @override
+  String get eventCreateTitleLabel => 'Event title';
+
+  @override
+  String get eventCreateTitleHint => 'Enter title';
+
+  @override
+  String get eventCreateTitleRequiredError => 'Title is required';
+
+  @override
+  String get eventCreateDescriptionLabel => 'Description';
+
+  @override
+  String get eventCreateDescriptionHint => 'Enter event description';
+
+  @override
+  String get eventCreateDescriptionRequiredError => 'Description is required';
+
+  @override
+  String get eventCreateTagsLabel => 'Tags (comma-separated)';
+
+  @override
+  String get eventCreateTagsHint => 'sport, entertainment';
+
+  @override
+  String get eventCreatePublicLabel => 'Public event';
+
+  @override
+  String get eventCreateTypeVoting => 'Voting';
+
+  @override
+  String get eventCreateTypeFixed => 'Fixed date';
+
+  @override
+  String get eventCreateVotingPeriodLabel => 'Voting period';
+
+  @override
+  String get eventCreateDateRangeSeparator => ' - ';
+
+  @override
+  String get eventCreateNotSelected => 'Not selected';
+
+  @override
+  String get eventCreateCityLabel => 'City';
+
+  @override
+  String get eventCreateMaxParticipantsLabel =>
+      'Maximum participants (optional)';
+
+  @override
+  String get eventCreateMaxParticipantsHint => 'Leave empty if unlimited';
+
+  @override
+  String get eventCreatePriceLabel => 'Price (₽)';
+
+  @override
+  String get eventCreatePriceRequiredError => 'Price is required';
+
+  @override
+  String get eventCreatePriceInvalidError => 'Invalid price';
+
+  @override
+  String get eventCreateDefaultCity => 'Moscow';
+
+  @override
+  String get eventCreateDefaultAddressSuffix => 'City center';
+
+  @override
+  String participantsShortLabel(int count) {
+    return '$count ppl.';
+  }
 }

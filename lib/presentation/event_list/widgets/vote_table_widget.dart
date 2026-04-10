@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../models/event_vote_slot.dart';
 
 class VoteTableWidget extends StatelessWidget {
@@ -35,6 +36,7 @@ class VoteTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final isAfternoonRange = startHour >= 12;
     final activeDays = {
@@ -66,7 +68,9 @@ class VoteTableWidget extends StatelessWidget {
               ),
               const Spacer(),
               _RangeStepper(
-                label: isAfternoonRange ? '12-23' : '00-11',
+                label: isAfternoonRange
+                    ? l10n.hoursRangeAfternoonLabel
+                    : l10n.hoursRangeMorningLabel,
                 onUpTap: isAfternoonRange ? onShowMorningHours : null,
                 onDownTap: isAfternoonRange ? null : onShowAfternoonHours,
               ),

@@ -7,6 +7,8 @@ import '../models/event_list_filter.dart';
 
 enum EventListStatus { initial, loading, success, failure }
 
+enum EventListSnackbarKind { applicationSubmitted, applicationCancelled }
+
 class EventListState extends Equatable {
   final EventListStatus status;
   final List<EventFeedItem> sourceItems;
@@ -23,7 +25,7 @@ class EventListState extends Equatable {
   final String? currentUserId;
   final Locale locale;
   final bool isDarkTheme;
-  final String? snackbarMessage;
+  final EventListSnackbarKind? snackbarKind;
   final int snackbarVersion;
   final String? errorMessage;
 
@@ -43,7 +45,7 @@ class EventListState extends Equatable {
     required this.currentUserId,
     required this.locale,
     required this.isDarkTheme,
-    required this.snackbarMessage,
+    required this.snackbarKind,
     required this.snackbarVersion,
     required this.errorMessage,
   });
@@ -64,7 +66,7 @@ class EventListState extends Equatable {
       currentUserId = null,
       locale = const Locale('ru'),
       isDarkTheme = true,
-      snackbarMessage = null,
+      snackbarKind = null,
       snackbarVersion = 0,
       errorMessage = null;
 
@@ -84,7 +86,7 @@ class EventListState extends Equatable {
     Object? currentUserId = _unset,
     Locale? locale,
     bool? isDarkTheme,
-    Object? snackbarMessage = _unset,
+    Object? snackbarKind = _unset,
     int? snackbarVersion,
     Object? errorMessage = _unset,
   }) {
@@ -109,9 +111,9 @@ class EventListState extends Equatable {
           : currentUserId as String?,
       locale: locale ?? this.locale,
       isDarkTheme: isDarkTheme ?? this.isDarkTheme,
-      snackbarMessage: snackbarMessage == _unset
-          ? this.snackbarMessage
-          : snackbarMessage as String?,
+      snackbarKind: snackbarKind == _unset
+          ? this.snackbarKind
+          : snackbarKind as EventListSnackbarKind?,
       snackbarVersion: snackbarVersion ?? this.snackbarVersion,
       errorMessage: errorMessage == _unset
           ? this.errorMessage
@@ -136,7 +138,7 @@ class EventListState extends Equatable {
     currentUserId,
     locale,
     isDarkTheme,
-    snackbarMessage,
+    snackbarKind,
     snackbarVersion,
     errorMessage,
   ];

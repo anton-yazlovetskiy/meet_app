@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import '../../presentation/auth/auth_gate_page.dart';
 import '../../presentation/auth/login_page.dart';
 import '../../presentation/event_list/event_list_page.dart';
-import '../../presentation/event_list/screens/event_create_screen.dart';
-import '../../presentation/settings/settings_page.dart';
 
 part 'app_router.gr.dart';
 

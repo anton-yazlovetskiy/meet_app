@@ -3,7 +3,6 @@
   "appTitle": "MeetApp",
   "eventListTitle": "Список мероприятий",
   "eventsPageTitle": "Мероприятия",
-  "settingsPageTitle": "Настройки",
   "createEventButton": "Создать",
   "createEventPageTitle": "Создать мероприятие",
   "eventDetailsPageTitle": "Детали мероприятия",
@@ -124,5 +123,49 @@
   "addToCalendarLabel": "Добавить в календарь",
   "maxParticipantsLabel": "Максимум",
   "applicantsForParticipationLabel": "Заявок",
-  "unlimitedLabel": "Без ограничения"
+  "unlimitedLabel": "Без ограничения",
+  "notAvailableLabel": "Н/Д",
+  "hoursRangeAllLabel": "00-23",
+  "hoursRangeAfternoonLabel": "12-23",
+  "hoursRangeMorningLabel": "00-11",
+  "eventCreateDateRequiredError": "Выберите дату начала",
+  "eventCreateVotingPeriodRequiredError": "Выберите период голосования",
+  "eventCreateErrorMessage": "Ошибка: {message}",
+  "@eventCreateErrorMessage": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+  "eventCreateDateNotSelected": "Не выбрана",
+  "eventCreateCitySearchHint": "Поиск города",
+  "eventCreateTitleLabel": "Название события",
+  "eventCreateTitleHint": "Введите название",
+  "eventCreateTitleRequiredError": "Требуется название",
+  "eventCreateDescriptionLabel": "Описание",
+  "eventCreateDescriptionHint": "Введите описание события",
+  "eventCreateDescriptionRequiredError": "Требуется описание",
+  "eventCreateTagsLabel": "Теги (через запятую)",
+  "eventCreateTagsHint": "спорт, развлечения",
+  "eventCreatePublicLabel": "Открытое событие",
+  "eventCreateTypeVoting": "Голосование",
+  "eventCreateTypeFixed": "С фиксированной датой",
+  "eventCreateVotingPeriodLabel": "Период голосования",
+  "eventCreateDateRangeSeparator": " - ",
+  "eventCreateNotSelected": "Не выбран",
+  "eventCreateCityLabel": "Город",
+  "eventCreateMaxParticipantsLabel": "Максимум участников (опционально)",
+  "eventCreateMaxParticipantsHint": "Оставьте пусто, если неограничено",
+  "eventCreatePriceLabel": "Цена (₽)",
+  "eventCreatePriceRequiredError": "Требуется цена",
+  "eventCreatePriceInvalidError": "Некорректная цена",
+  "eventCreateDefaultCity": "Москва",
+  "eventCreateDefaultAddressSuffix": "Центр города",
+  "participantsShortLabel": "{count} чел.",
+  "@participantsShortLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

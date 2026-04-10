@@ -116,12 +116,6 @@ abstract class AppLocalizations {
   /// **'Events'**
   String get eventsPageTitle;
 
-  /// No description provided for @settingsPageTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
-  String get settingsPageTitle;
-
   /// No description provided for @createEventButton.
   ///
   /// In en, this message translates to:
@@ -847,6 +841,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlimited'**
   String get unlimitedLabel;
+
+  /// No description provided for @notAvailableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get notAvailableLabel;
+
+  /// No description provided for @hoursRangeAllLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'00-23'**
+  String get hoursRangeAllLabel;
+
+  /// No description provided for @hoursRangeAfternoonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'12-23'**
+  String get hoursRangeAfternoonLabel;
+
+  /// No description provided for @hoursRangeMorningLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'00-11'**
+  String get hoursRangeMorningLabel;
+
+  /// No description provided for @eventCreateDateRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a start date'**
+  String get eventCreateDateRequiredError;
+
+  /// No description provided for @eventCreateVotingPeriodRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a voting period'**
+  String get eventCreateVotingPeriodRequiredError;
+
+  /// No description provided for @eventCreateErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {message}'**
+  String eventCreateErrorMessage(Object message);
+
+  /// No description provided for @eventCreateDateNotSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not selected'**
+  String get eventCreateDateNotSelected;
+
+  /// No description provided for @eventCreateCitySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search city'**
+  String get eventCreateCitySearchHint;
+
+  /// No description provided for @eventCreateTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Event title'**
+  String get eventCreateTitleLabel;
+
+  /// No description provided for @eventCreateTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter title'**
+  String get eventCreateTitleHint;
+
+  /// No description provided for @eventCreateTitleRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is required'**
+  String get eventCreateTitleRequiredError;
+
+  /// No description provided for @eventCreateDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get eventCreateDescriptionLabel;
+
+  /// No description provided for @eventCreateDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter event description'**
+  String get eventCreateDescriptionHint;
+
+  /// No description provided for @eventCreateDescriptionRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Description is required'**
+  String get eventCreateDescriptionRequiredError;
+
+  /// No description provided for @eventCreateTagsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags (comma-separated)'**
+  String get eventCreateTagsLabel;
+
+  /// No description provided for @eventCreateTagsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'sport, entertainment'**
+  String get eventCreateTagsHint;
+
+  /// No description provided for @eventCreatePublicLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Public event'**
+  String get eventCreatePublicLabel;
+
+  /// No description provided for @eventCreateTypeVoting.
+  ///
+  /// In en, this message translates to:
+  /// **'Voting'**
+  String get eventCreateTypeVoting;
+
+  /// No description provided for @eventCreateTypeFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed date'**
+  String get eventCreateTypeFixed;
+
+  /// No description provided for @eventCreateVotingPeriodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Voting period'**
+  String get eventCreateVotingPeriodLabel;
+
+  /// No description provided for @eventCreateDateRangeSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **' - '**
+  String get eventCreateDateRangeSeparator;
+
+  /// No description provided for @eventCreateNotSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not selected'**
+  String get eventCreateNotSelected;
+
+  /// No description provided for @eventCreateCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get eventCreateCityLabel;
+
+  /// No description provided for @eventCreateMaxParticipantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum participants (optional)'**
+  String get eventCreateMaxParticipantsLabel;
+
+  /// No description provided for @eventCreateMaxParticipantsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty if unlimited'**
+  String get eventCreateMaxParticipantsHint;
+
+  /// No description provided for @eventCreatePriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price (₽)'**
+  String get eventCreatePriceLabel;
+
+  /// No description provided for @eventCreatePriceRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Price is required'**
+  String get eventCreatePriceRequiredError;
+
+  /// No description provided for @eventCreatePriceInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid price'**
+  String get eventCreatePriceInvalidError;
+
+  /// No description provided for @eventCreateDefaultCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Moscow'**
+  String get eventCreateDefaultCity;
+
+  /// No description provided for @eventCreateDefaultAddressSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'City center'**
+  String get eventCreateDefaultAddressSuffix;
+
+  /// No description provided for @participantsShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ppl.'**
+  String participantsShortLabel(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -18,9 +18,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get eventsPageTitle => 'Мероприятия';
 
   @override
-  String get settingsPageTitle => 'Настройки';
-
-  @override
   String get createEventButton => 'Создать';
 
   @override
@@ -387,4 +384,107 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get unlimitedLabel => 'Без ограничения';
+
+  @override
+  String get notAvailableLabel => 'Н/Д';
+
+  @override
+  String get hoursRangeAllLabel => '00-23';
+
+  @override
+  String get hoursRangeAfternoonLabel => '12-23';
+
+  @override
+  String get hoursRangeMorningLabel => '00-11';
+
+  @override
+  String get eventCreateDateRequiredError => 'Выберите дату начала';
+
+  @override
+  String get eventCreateVotingPeriodRequiredError =>
+      'Выберите период голосования';
+
+  @override
+  String eventCreateErrorMessage(Object message) {
+    return 'Ошибка: $message';
+  }
+
+  @override
+  String get eventCreateDateNotSelected => 'Не выбрана';
+
+  @override
+  String get eventCreateCitySearchHint => 'Поиск города';
+
+  @override
+  String get eventCreateTitleLabel => 'Название события';
+
+  @override
+  String get eventCreateTitleHint => 'Введите название';
+
+  @override
+  String get eventCreateTitleRequiredError => 'Требуется название';
+
+  @override
+  String get eventCreateDescriptionLabel => 'Описание';
+
+  @override
+  String get eventCreateDescriptionHint => 'Введите описание события';
+
+  @override
+  String get eventCreateDescriptionRequiredError => 'Требуется описание';
+
+  @override
+  String get eventCreateTagsLabel => 'Теги (через запятую)';
+
+  @override
+  String get eventCreateTagsHint => 'спорт, развлечения';
+
+  @override
+  String get eventCreatePublicLabel => 'Открытое событие';
+
+  @override
+  String get eventCreateTypeVoting => 'Голосование';
+
+  @override
+  String get eventCreateTypeFixed => 'С фиксированной датой';
+
+  @override
+  String get eventCreateVotingPeriodLabel => 'Период голосования';
+
+  @override
+  String get eventCreateDateRangeSeparator => ' - ';
+
+  @override
+  String get eventCreateNotSelected => 'Не выбран';
+
+  @override
+  String get eventCreateCityLabel => 'Город';
+
+  @override
+  String get eventCreateMaxParticipantsLabel =>
+      'Максимум участников (опционально)';
+
+  @override
+  String get eventCreateMaxParticipantsHint =>
+      'Оставьте пусто, если неограничено';
+
+  @override
+  String get eventCreatePriceLabel => 'Цена (₽)';
+
+  @override
+  String get eventCreatePriceRequiredError => 'Требуется цена';
+
+  @override
+  String get eventCreatePriceInvalidError => 'Некорректная цена';
+
+  @override
+  String get eventCreateDefaultCity => 'Москва';
+
+  @override
+  String get eventCreateDefaultAddressSuffix => 'Центр города';
+
+  @override
+  String participantsShortLabel(int count) {
+    return '$count чел.';
+  }
 }

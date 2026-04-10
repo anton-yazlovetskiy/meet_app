@@ -3,7 +3,6 @@
   "appTitle": "MeetApp",
   "eventListTitle": "Events",
   "eventsPageTitle": "Events",
-  "settingsPageTitle": "Settings",
   "createEventButton": "Create",
   "createEventPageTitle": "Create Event",
   "eventDetailsPageTitle": "Event Details",
@@ -124,5 +123,49 @@
   "addToCalendarLabel": "Add to calendar",
   "maxParticipantsLabel": "Maximum",
   "applicantsForParticipationLabel": "Applications",
-  "unlimitedLabel": "Unlimited"
+  "unlimitedLabel": "Unlimited",
+  "notAvailableLabel": "N/A",
+  "hoursRangeAllLabel": "00-23",
+  "hoursRangeAfternoonLabel": "12-23",
+  "hoursRangeMorningLabel": "00-11",
+  "eventCreateDateRequiredError": "Select a start date",
+  "eventCreateVotingPeriodRequiredError": "Select a voting period",
+  "eventCreateErrorMessage": "Error: {message}",
+  "@eventCreateErrorMessage": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+  "eventCreateDateNotSelected": "Not selected",
+  "eventCreateCitySearchHint": "Search city",
+  "eventCreateTitleLabel": "Event title",
+  "eventCreateTitleHint": "Enter title",
+  "eventCreateTitleRequiredError": "Title is required",
+  "eventCreateDescriptionLabel": "Description",
+  "eventCreateDescriptionHint": "Enter event description",
+  "eventCreateDescriptionRequiredError": "Description is required",
+  "eventCreateTagsLabel": "Tags (comma-separated)",
+  "eventCreateTagsHint": "sport, entertainment",
+  "eventCreatePublicLabel": "Public event",
+  "eventCreateTypeVoting": "Voting",
+  "eventCreateTypeFixed": "Fixed date",
+  "eventCreateVotingPeriodLabel": "Voting period",
+  "eventCreateDateRangeSeparator": " - ",
+  "eventCreateNotSelected": "Not selected",
+  "eventCreateCityLabel": "City",
+  "eventCreateMaxParticipantsLabel": "Maximum participants (optional)",
+  "eventCreateMaxParticipantsHint": "Leave empty if unlimited",
+  "eventCreatePriceLabel": "Price (₽)",
+  "eventCreatePriceRequiredError": "Price is required",
+  "eventCreatePriceInvalidError": "Invalid price",
+  "eventCreateDefaultCity": "Moscow",
+  "eventCreateDefaultAddressSuffix": "City center",
+  "participantsShortLabel": "{count} ppl.",
+  "@participantsShortLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

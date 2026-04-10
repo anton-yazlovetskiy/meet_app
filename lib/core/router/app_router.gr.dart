@@ -27,22 +27,6 @@ class AuthGateRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [EventCreatePage]
-class EventCreateRoute extends PageRouteInfo<void> {
-  const EventCreateRoute({List<PageRouteInfo>? children})
-    : super(EventCreateRoute.name, initialChildren: children);
-
-  static const String name = 'EventCreateRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const EventCreatePage();
-    },
-  );
-}
-
-/// generated route for
 /// [EventListPage]
 class EventListRoute extends PageRouteInfo<void> {
   const EventListRoute({List<PageRouteInfo>? children})
@@ -116,81 +100,4 @@ class LoginRouteArgs {
 
   @override
   int get hashCode => key.hashCode ^ currentLocale.hashCode;
-}
-
-/// generated route for
-/// [SettingsPage]
-class SettingsRoute extends PageRouteInfo<SettingsRouteArgs> {
-  SettingsRoute({
-    Key? key,
-    required Locale currentLocale,
-    required ThemeMode currentThemeMode,
-    required void Function(Locale) onLocaleChanged,
-    required void Function(ThemeMode) onThemeModeChanged,
-    List<PageRouteInfo>? children,
-  }) : super(
-         SettingsRoute.name,
-         args: SettingsRouteArgs(
-           key: key,
-           currentLocale: currentLocale,
-           currentThemeMode: currentThemeMode,
-           onLocaleChanged: onLocaleChanged,
-           onThemeModeChanged: onThemeModeChanged,
-         ),
-         initialChildren: children,
-       );
-
-  static const String name = 'SettingsRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      final args = data.argsAs<SettingsRouteArgs>();
-      return SettingsPage(
-        key: args.key,
-        currentLocale: args.currentLocale,
-        currentThemeMode: args.currentThemeMode,
-        onLocaleChanged: args.onLocaleChanged,
-        onThemeModeChanged: args.onThemeModeChanged,
-      );
-    },
-  );
-}
-
-class SettingsRouteArgs {
-  const SettingsRouteArgs({
-    this.key,
-    required this.currentLocale,
-    required this.currentThemeMode,
-    required this.onLocaleChanged,
-    required this.onThemeModeChanged,
-  });
-
-  final Key? key;
-
-  final Locale currentLocale;
-
-  final ThemeMode currentThemeMode;
-
-  final void Function(Locale) onLocaleChanged;
-
-  final void Function(ThemeMode) onThemeModeChanged;
-
-  @override
-  String toString() {
-    return 'SettingsRouteArgs{key: $key, currentLocale: $currentLocale, currentThemeMode: $currentThemeMode, onLocaleChanged: $onLocaleChanged, onThemeModeChanged: $onThemeModeChanged}';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! SettingsRouteArgs) return false;
-    return key == other.key &&
-        currentLocale == other.currentLocale &&
-        currentThemeMode == other.currentThemeMode;
-  }
-
-  @override
-  int get hashCode =>
-      key.hashCode ^ currentLocale.hashCode ^ currentThemeMode.hashCode;
 }

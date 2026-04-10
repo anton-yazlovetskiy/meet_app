@@ -40,7 +40,7 @@ class EventListAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         onPressed: isMobile ? onOpenDrawer : null,
         icon: const Icon(Icons.pets),
-        tooltip: isMobile ? l10n.tagsTooltip : 'MeetApp',
+        tooltip: isMobile ? l10n.tagsTooltip : l10n.appTitle,
       ),
       title: SizedBox(
         height: 44,
